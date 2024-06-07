@@ -1,13 +1,13 @@
+import { useState } from 'react';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import ThreeJsRenderer  from "./ThreeJsRenderer";
 
-import React, { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Torus } from '@react-three/drei';
 
 function App() {
   const [count, setCount] = useState(0)
+
 
   return (
     <>
@@ -20,17 +20,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      <div style={{width:"100%", height: "75%"}}>
-      <Canvas
-        style={{background: "red"}}
-      >
-        <ambientLight intensity={Math.PI / 2} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Torus args={[10, 3, 16, 100]}/>
-                <OrbitControls makeDefault />
-      </Canvas>
-      </div>
+      <ThreeJsRenderer />
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
