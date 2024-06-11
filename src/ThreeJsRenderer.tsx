@@ -1,4 +1,4 @@
-import { Box3, Vector3, Object3D, BoxHelper, Raycaster } from "three";
+import { Box3, Vector3, Object3D, BoxHelper, Raycaster, DoubleSide } from "three";
 import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import VoxelInstancedMesh from "./VoxelInstancedMesh";
@@ -6,7 +6,7 @@ import VoxelInstancedMesh from "./VoxelInstancedMesh";
 import { OrbitControls, Torus, Sphere,TorusKnot, useHelper } from '@react-three/drei';
 
 function ThreeJsRenderer() {
-    const [ gridSize ] = useState<number>(0.8);
+    const [ gridSize ] = useState<number>(0.2);
     const [geometriesType, setGeometriesType] = useState<string>("torus");
     const [voxelsData, setVoxelsData] = useState<Vector3[]>([])
     const [helper, setHelper] = useState<boolean>(true);
@@ -17,6 +17,7 @@ function ThreeJsRenderer() {
     function voxelizeMesh(mesh) {
         const voxels = [];
         const boundingBox = new Box3().setFromObject(mesh);
+        console.log(boundingBox)
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
@@ -57,21 +58,19 @@ function ThreeJsRenderer() {
                         <Torus
                             args={[2, 1, 30, 30]}
                             ref={torusRef}
-                            wireframe={true}
                         >
-                            <meshStandardMaterial color="blue" wireframe={true} />
+                            <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
                         </Torus>
                     }
                     {geometriesType === "torus knot" &&
                         <TorusKnot
                             args={[2, 0.6, 50, 10]}
-                            material-color="green"
                             ref={torusRef}
                         />
                     }
                     {geometriesType === "sphere" &&
                         <Sphere>
-                          <meshStandardMaterial color="green" />
+                          <meshStandardMaterial color="green" wireframe={true} side={DoubleSide} />
                         </Sphere>
                     }
                     <VoxelInstancedMesh voxelsData={voxelsData} />
