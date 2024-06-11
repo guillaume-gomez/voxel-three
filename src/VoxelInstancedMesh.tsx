@@ -4,7 +4,6 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 
 
 interface VoxelInstancedMeshProps {
-  numberOfCubes: number;
   voxelsData: Vector3[];
 }
 
@@ -15,7 +14,7 @@ const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
 const paramsMaterial = { roughness: 0.0, metalness: 0.2, emissive: 0x000000, castShadow: true, side: DoubleSide };
 const material =  new MeshLambertMaterial({color: "#BD2827", ...paramsMaterial})
 
-function VoxelInstancedMesh ({numberOfCubes, voxelsData} : VoxelInstancedMeshProps) {
+function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
 
   useEffect(() => {
@@ -40,6 +39,6 @@ function VoxelInstancedMesh ({numberOfCubes, voxelsData} : VoxelInstancedMeshPro
       args={[boxGeometry, material, 1000 ]}
     />
   );
-};
+}
 
 export default VoxelInstancedMesh;
