@@ -11,7 +11,7 @@ const SIZE = 0.2;
 const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
 
 
-const paramsMaterial = { roughness: 0.0, metalness: 0.2, emissive: 0x000000, castShadow: true, side: DoubleSide };
+const paramsMaterial = { roughness: 0.0, metalness: 0.2, emissive: 0x000000, castShadow: true};
 const material =  new MeshLambertMaterial({color: "#BD2827", ...paramsMaterial})
 
 function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
@@ -36,7 +36,7 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
       receiveShadow={true}
       castShadow={true}
       ref={meshRef}
-      args={[boxGeometry, material, 1000 ]}
+      args={[boxGeometry, material, voxelsData.length ]}
     />
   );
 }
