@@ -22,13 +22,14 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   }, [voxelsData])
 
   function init() {
-      voxelsData.map((position, index) => {
-        const object = new Object3D();
-        object.position.set(position.x, position.y, position.z);
-        object.updateMatrix();
-        meshRef.current?.setMatrixAt(index, object.matrix);
-      })
-    meshRef.current.instanceMatrix.needsUpdate = true;
+    voxelsData.map((position, index) => {
+      const object = new Object3D();
+      object.position.set(position.x, position.y, position.z);
+      object.updateMatrix();
+      meshRef.current?.setMatrixAt(index, object.matrix);
+    })
+
+    meshRef.current!.instanceMatrix.needsUpdate = true;
   }
 
   return (
