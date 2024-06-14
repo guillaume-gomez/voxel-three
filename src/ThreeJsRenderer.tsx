@@ -2,6 +2,7 @@ import { Box3, Vector3, Object3D, Raycaster, DoubleSide } from "three";
 import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import VoxelInstancedMesh from "./VoxelInstancedMesh";
+import BoxHelperMesh from "./BoxHelperMesh";
 
 import { OrbitControls, Torus, Sphere,TorusKnot } from '@react-three/drei';
 
@@ -9,7 +10,8 @@ import { OrbitControls, Torus, Sphere,TorusKnot } from '@react-three/drei';
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
     const [geometriesType] = useState<string>("torus");
-    const [voxelsData, setVoxelsData] = useState<Vector3[]>([])
+    const [voxelsData, setVoxelsData] = useState<Vector3[]>([]);
+    const [randomize] = useState<boolean>(false);
     const torusRef = useRef<Object3D>(null);
 
     function voxelizeMesh(mesh: Object3D) {
@@ -20,7 +22,16 @@ function ThreeJsRenderer() {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
                     const position = new Vector3(i, j, k);
                     if (isInsideMesh(position, mesh)) {
-                        voxels.push(position)
+                        if(randomize) {
+                            voxels.push(new Vector3(
+                                position.x * Math.random(),
+                                position.y * Math.random(),
+                                position.z * Math.random(),
+                                )
+                            )
+                        } else {
+                            voxels.push(position)
+                        }
                     }
                 }
             }
@@ -51,12 +62,14 @@ function ThreeJsRenderer() {
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                     {geometriesType === "torus" &&
+                    <BoxHelperMesh>
                         <Torus
                             args={[2, 1, 30, 30]}
                             ref={torusRef}
                         >
                             <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
                         </Torus>
+                    </BoxHelperMesh>
                     }
                     {geometriesType === "torus knot" &&
                         <TorusKnot
@@ -69,7 +82,7 @@ function ThreeJsRenderer() {
                           <meshStandardMaterial color="green" wireframe={true} side={DoubleSide} />
                         </Sphere>
                     }
-                    <VoxelInstancedMesh voxelsData={voxelsData} />
+                        <VoxelInstancedMesh voxelsData={voxelsData} />
                     <OrbitControls makeDefault />
             </Canvas>
       </div>
