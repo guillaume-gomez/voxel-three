@@ -4,15 +4,16 @@ import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 
-import { OrbitControls, Torus, Sphere,TorusKnot } from '@react-three/drei';
+import { OrbitControls, Torus, Sphere,TorusKnot, Stage } from '@react-three/drei';
 
 
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
-    const [geometriesType] = useState<string>("sphere");
+    const [geometriesType] = useState<string>("torus knot");
     const [randomizePosition] = useState<boolean>(false);
-    const objectRef = useRef<Object3D>(null);
+    const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
+    const objectRef = useRef<Object3D>(null);
 
     return (
         <div style={{width:"100%", height: "75%"}}>
@@ -25,6 +26,11 @@ function ThreeJsRenderer() {
 
                 shadows
             >
+                    <Stage
+                        environment={null}
+                        adjustCamera
+                        preset="rembrandt"
+                    >
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
@@ -33,6 +39,7 @@ function ThreeJsRenderer() {
                             <Torus
                                 args={[2, 1, 30, 30]}
                                 ref={objectRef}
+                                visible={showObject}
                             >
                                 <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
                             </Torus>
@@ -41,12 +48,15 @@ function ThreeJsRenderer() {
                             <TorusKnot
                                 args={[2, 0.6, 50, 10]}
                                 ref={objectRef}
+                                visible={showObject}
                             >
                                 <meshStandardMaterial color="purple" wireframe={true} side={DoubleSide} />
                             </TorusKnot>
                         }
                         {geometriesType === "sphere" &&
-                            <Sphere ref={objectRef}>
+                            <Sphere ref={objectRef}
+                                    visible={showObject}
+                            >
                               <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
                             </Sphere>
                         }
@@ -56,6 +66,7 @@ function ThreeJsRenderer() {
                         gridSize={gridSize}
                         randomizePosition={randomizePosition}
                     />
+                    </Stage>
                     <OrbitControls makeDefault />
             </Canvas>
       </div>
