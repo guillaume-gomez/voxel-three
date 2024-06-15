@@ -41,7 +41,10 @@ function ThreeJsRenderer() {
                     >
                         <meshStandardMaterial color="hotpink" />
                     </Box>*/}
-
+                    <Model
+                        position={[2,0,0]}
+                        rotation={[Math.PI/2,0,0]}
+                    />
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
                             <Torus
