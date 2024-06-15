@@ -4,14 +4,14 @@ import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage } from '@react-three/drei';
+import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats } from '@react-three/drei';
 
 
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
     const [geometriesType] = useState<string>("torus knot");
     const [randomizePosition] = useState<boolean>(false);
-    const [showObject, setShowObject] = useState<boolean>(false);
+    const [showObject, setShowObject] = useState<boolean>(true);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D>(null);
 
@@ -34,6 +34,14 @@ function ThreeJsRenderer() {
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+                    {/*<Box
+                        args={[10, 10, 2]}
+                        rotation={[Math.PI/2,0,0]}
+                        position={[0,-5,0]}
+                    >
+                        <meshStandardMaterial color="hotpink" />
+                    </Box>*/}
+
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
                             <Torus
@@ -67,6 +75,12 @@ function ThreeJsRenderer() {
                         randomizePosition={randomizePosition}
                     />
                     </Stage>
+                    {import.meta.env.MODE === "development" &&
+                        <group>
+                            <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
+                            <Stats/>
+                        </group>
+                    }
                     <OrbitControls makeDefault />
             </Canvas>
       </div>
