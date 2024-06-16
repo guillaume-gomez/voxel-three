@@ -1,10 +1,11 @@
-import {  Object3D, DoubleSide } from "three";
+import {  Object3D, DoubleSide} from "three";
 import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
+import Model from "./Model";
 
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats } from '@react-three/drei';
+import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
 
 
 function ThreeJsRenderer() {
@@ -42,8 +43,9 @@ function ThreeJsRenderer() {
                         <meshStandardMaterial color="hotpink" />
                     </Box>*/}
                     <Model
-                        position={[2,0,0]}
-                        rotation={[Math.PI/2,0,0]}
+                        position={[0,0,0]}
+                        rotation={[0,0,0]}
+                        autoScale
                     />
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
@@ -84,6 +86,7 @@ function ThreeJsRenderer() {
                             <Stats/>
                         </group>
                     }
+
                     <OrbitControls makeDefault />
             </Canvas>
       </div>
