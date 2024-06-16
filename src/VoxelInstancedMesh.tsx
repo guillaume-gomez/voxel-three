@@ -2,17 +2,18 @@ import { useRef , useEffect } from 'react';
 import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3,DoubleSide } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
+interface VoxelData {
+  color: Vector3;
+  position: Vector3;
+}
 
 interface VoxelInstancedMeshProps {
-  voxelsData: Vector3[];
+  voxelsData: VoxelData[];
 }
 
 const SIZE = 0.2;
 const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
-
-
-const paramsMaterial = { roughness: 0.0, metalness: 0.2, emissive: 0x000000, castShadow: true};
-const material =  new MeshLambertMaterial({color: "#BD2827", ...paramsMaterial})
+const material =  new MeshLambertMaterial({ emissive: 0x000000 })
 
 function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
@@ -22,10 +23,11 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   }, [voxelsData])
 
   function init() {
-    voxelsData.map((position, index) => {
+    voxelsData.map(({position, color}, index) => {
       const object = new Object3D();
-      object.position.set(position.x, position.y, position.z);
+      object.position.set(...position);
       object.updateMatrix();
+      meshRef.current?.setColorAt(index, color);
       meshRef.current?.setMatrixAt(index, object.matrix);
     })
 
