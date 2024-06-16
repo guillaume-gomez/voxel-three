@@ -25,7 +25,8 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
                     const position = new Vector3(i, j, k);
-                    if (isInsideMesh(position, mesh)) {
+
+                    if (isInsideMeshInEachDirection(position, mesh)) {
                         if(randomizePosition) {
                             voxels.push(randomize(position));
                         } else {
@@ -38,9 +39,24 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
         setVoxelsData(voxels);
     }
 
-    function isInsideMesh(position: Vector3 , mesh: Object3D) {
+    function isInsideMeshInEachDirection(position: Vector3, mesh: Object3D) :boolean {
+        const directions = [
+            new Vector3(-1,0,0), new Vector3(1,0,0), // raycast on X
+            new Vector3(0,-1,0), new Vector3(0,-1,0), // raycast on Y
+            new Vector3(0,0,-1), new Vector3(0,0,1) // raycast on Z
+        ];
+        for(const direction of directions) {
+            if(isInsideMesh(position, direction, mesh)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isInsideMesh(position: Vector3 , direction: Vector3, mesh: Object3D) :boolean {
         const rayCaster = new Raycaster();
-        rayCaster.set(position, new Vector3(0,-1,0));
+        rayCaster.set(position, direction);
         const rayCasterIntersects = rayCaster.intersectObject(mesh, true);
         // we need odd number of intersections
         return rayCasterIntersects.length % 2 === 1;
@@ -53,6 +69,8 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
             position.z + (Math.random() - 0.5),
         );
     }
+
+    console.log(voxelsData.length)
 
     return (
         <VoxelInstancedMesh voxelsData={voxelsData} />
