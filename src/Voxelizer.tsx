@@ -55,11 +55,11 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
     }
 
     function isInsideMesh(position: Vector3 , direction: Vector3, mesh: Object3D) :boolean {
-        const rayCaster = new Raycaster();
-        rayCaster.set(position, direction);
+        const rayCaster = new Raycaster(position, direction);
         const rayCasterIntersects = rayCaster.intersectObject(mesh, true);
         // we need odd number of intersections
-        return rayCasterIntersects.length % 2 === 1;
+        // + limit intersections below 1.5 * gridSize (the result is more efficiant than limiting the ray far properties)
+        return rayCasterIntersects.length % 2 === 1 && rayCasterIntersects[0].distance <= 1.5 * gridSize;
     }
 
     function randomize(position: Vector3) : Vector3 {
