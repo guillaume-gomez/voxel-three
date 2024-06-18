@@ -24,13 +24,14 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
-                    const position = new Vector3(i, j, k);
+
+                    const centerPosition = new Vector3(i + gridSize/2, j + gridSize/2, k + gridSize/2);
 
                     if (isInsideMeshInEachDirection(position, mesh)) {
                         if(randomizePosition) {
-                            voxels.push(randomize(position));
+                            voxels.push(randomize(centerPosition));
                         } else {
-                            voxels.push(position)
+                            voxels.push(centerPosition)
                         }
                     }
                 }
