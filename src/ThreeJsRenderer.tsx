@@ -5,12 +5,12 @@ import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 import SkyBox from "./SkyBox";
 
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats } from '@react-three/drei';
+import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats, Plane } from '@react-three/drei';
 
 
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
-    const [geometriesType] = useState<string>("torus knot");
+    const [geometriesType] = useState<string>("torus");
     const [randomizePosition] = useState<boolean>(false);
     const [showObject, setShowObject] = useState<boolean>(true);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
@@ -75,6 +75,12 @@ function ThreeJsRenderer() {
                         object3D={selectedObject3D}
                         gridSize={gridSize}
                         randomizePosition={randomizePosition}
+                    />
+                    <Plane
+                        args={[30, 30]}
+                        rotation={[-Math.PI/2,0,0]}
+                        position={[0,-4,0]}
+                        material-color="grey"
                     />
                     </Stage>
                     {import.meta.env.MODE === "development" &&
