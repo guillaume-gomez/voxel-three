@@ -10,9 +10,9 @@ import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats } from 
 
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
-    const [geometriesType] = useState<string>("torus knot");
+    const [geometriesType] = useState<string>("torus");
     const [randomizePosition] = useState<boolean>(false);
-    const [showObject, setShowObject] = useState<boolean>(true);
+    const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D>(null);
 
