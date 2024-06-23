@@ -5,11 +5,11 @@ import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 import SkyBox from "./SkyBox";
 
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats } from '@react-three/drei';
+import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats, GizmoViewport, GizmoHelper } from '@react-three/drei';
 
 
 function ThreeJsRenderer() {
-    const [ gridSize ] = useState<number>(0.2);
+    const [ gridSize ] = useState<number>(0.5);
     const [geometriesType] = useState<string>("torus");
     const [randomizePosition] = useState<boolean>(false);
     const [showObject, setShowObject] = useState<boolean>(false);
@@ -83,6 +83,9 @@ function ThreeJsRenderer() {
                             <Stats/>
                         </group>
                     }
+                       <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
+                          <GizmoViewport labelColor="white" axisHeadScale={1} />
+                        </GizmoHelper>
                     <OrbitControls makeDefault />
             </Canvas>
       </div>
