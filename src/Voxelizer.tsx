@@ -1,4 +1,4 @@
-import { Box3, Vector3, Object3D, Raycaster } from "three";
+import { Box3, Vector3, Color, Object3D, Raycaster } from "three";
 import { useRef, useState, useEffect } from 'react';
 import VoxelInstancedMesh from "./VoxelInstancedMesh";
 
@@ -34,9 +34,15 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
                     const centerPosition = new Vector3(x, y, z);
                     if (isInsideMesh(centerPosition, mesh)) {
                         if(randomizePosition) {
-                            voxels.push(randomize(centerPosition));
+                            voxels.push({
+                                position:randomize(centerPosition),
+                                color: new Color( 0x00F0F0 )
+                            });
                         } else {
-                            voxels.push(centerPosition)
+                            voxels.push({
+                                position,
+                                color: new Color( 0xffff00 )
+                            });
                         }
 
                         voxelsPositionHash = { [`${x}#${y}#${z}`]: indexPosition, ...voxelsPositionHash };
