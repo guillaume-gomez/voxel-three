@@ -24,11 +24,11 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false}) {
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
-                    const position = new Vector3(i, j, k);
-                    if (isInsideMesh(position, mesh)) {
+                    const centerPosition = new Vector3(i + gridSize/2, j + gridSize/2, k + gridSize/2);
+                    if (isInsideMesh(centerPosition, mesh)) {
                         if(randomizePosition) {
                             voxels.push({
-                                position:randomize(position),
+                                position:randomize(centerPosition),
                                 color: new Color( 0x00F0F0 )
                             });
                         } else {
