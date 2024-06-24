@@ -18,12 +18,20 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
     }, [object3D])
 
     function voxelizeMesh(mesh: Object3D) {
+        let voxelsPositionHash = {};
+        let indexPosition = 0;
+
         const voxels = [];
         const boundingBox = new Box3().setFromObject(mesh);
+        console.log(boundingBox);
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
-                    const centerPosition = new Vector3(i + gridSize/2, j + gridSize/2, k + gridSize/2);
+                    const x = i + gridSize/2;
+                    const y = j + gridSize/2;
+                    const z = k + gridSize/2;
+
+                    const centerPosition = new Vector3(x, y, z);
                     if (isInsideMesh(centerPosition, mesh)) {
                         if(randomizePosition) {
                             voxels.push({
@@ -36,11 +44,69 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
                                 color: new Color( 0xffff00 )
                             });
                         }
+
+                        voxelsPositionHash = { [createKey(x,y,z)]: indexPosition, ...voxelsPositionHash };
+                        indexPosition++;
                     }
                 }
             }
         }
+
+        //remove inner voxels
+        for(let i=0; i < voxels.length; i++) {
+            const {x, y, z} = voxels[i].position;
+             if(isInner(voxelsPositionHash, x, y, z)) {
+                voxels.splice(i, 1);
+                //voxels[i] = { position: voxels[i].position, color: new Color(0xFF23DD)}
+            }
+        }
+        console.log("numberOfInstancesDeleted : ", Object.keys(voxelsPositionHash).length - voxels.length)
         setVoxelsData(voxels);
+    }
+
+    function createKey(x: number, y: number, z: number) : string {
+        const xFixed = x.toFixed(5);
+        const yFixed = y.toFixed(5);
+        const zFixed = z.toFixed(5);
+        
+        return `${xFixed}#${yFixed}#${zFixed}`;
+    }
+
+    // has bug
+    function hasUpSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y-gridSize,z)];
+    }
+
+    // has bug
+    function hasDownSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y +gridSize,z)];
+    }
+
+    function hasLeftSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x - gridSize,y,z)];
+    }
+
+    function hasRightSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x + gridSize,y,z)];
+    }
+
+    function hasFrontSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y,z - gridSize)];
+    }
+
+    function hasBackSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y,z + gridSize)];
+    }
+
+    function isInner(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return (
+            hasBackSibling(voxelsPositionHash,x,y,z) &&
+            hasFrontSibling(voxelsPositionHash,x,y,z) &&
+            hasLeftSibling(voxelsPositionHash,x,y,z) &&
+            hasRightSibling(voxelsPositionHash,x,y,z) &&
+            hasUpSibling(voxelsPositionHash,x,y,z) &&
+            hasDownSibling(voxelsPositionHash,x,y,z)
+        );
     }
 
     function isInsideMesh(position: Vector3 , mesh: Object3D) {
