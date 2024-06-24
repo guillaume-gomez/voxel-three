@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Vector3, Box3 } from "three";
+import { useEffect, useState, RefObject } from "react";
+import { Vector3, Box3, Group } from "three";
 import { Sky, useGLTF } from '@react-three/drei';
 
 interface ModelProps {
@@ -8,12 +8,13 @@ interface ModelProps {
   scale?: Vector3;
   path?: string;
   autoScale?: boolean;
+  groupRef: RefObject<Group>;
 }
 
 const MAX_SIZE = 8;
 const SCALE = new Vector3(1,1,1);
 
-function Model({ position, rotation, scale = SCALE, path = '/Donut.glb', autoScale=false }: ModelProps) {
+function Model({ position, rotation, scale = SCALE, path = '/Donut.glb', autoScale=false, groupRef }: ModelProps) {
   const { scene } = useGLTF(path);
   const [computedScale, setComputedScale] = useState<Vector3>(scale);
 
@@ -33,6 +34,7 @@ function Model({ position, rotation, scale = SCALE, path = '/Donut.glb', autoSca
 
   return (
     <primitive
+      ref={groupRef}
       position={position}
       rotation={rotation}
       object={scene}
