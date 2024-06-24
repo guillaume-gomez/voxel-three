@@ -7,7 +7,6 @@ import SkyBox from "./SkyBox";
 
 import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats, GizmoViewport, GizmoHelper } from '@react-three/drei';
 
-
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.5);
     const [geometriesType] = useState<string>("torus");
