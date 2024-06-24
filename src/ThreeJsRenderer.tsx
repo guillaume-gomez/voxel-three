@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 import Model from "./Model";
+import SkyBox from "./SkyBox";
 
 import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
 
@@ -27,6 +28,7 @@ function ThreeJsRenderer() {
 
                 shadows
             >
+            <SkyBox />
                     <Stage
                         environment={null}
                         adjustCamera
