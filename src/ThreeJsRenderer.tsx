@@ -13,12 +13,10 @@ function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
     const [geometriesType] = useState<string>("torus knot");
     const [randomizePosition] = useState<boolean>(false);
-    const [showObject, setShowObject] = useState<boolean>(true);
+    const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
     const modelRef= useRef<Group>(null);
-
-    console.log(modelRef.current)
 
     return (
         <div style={{width:"100%", height: "75%"}}>
