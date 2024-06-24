@@ -1,9 +1,9 @@
 import { useRef , useEffect } from 'react';
-import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3,DoubleSide } from 'three';
+import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3, Color  } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
-interface VoxelData {
-  color: Vector3;
+export interface VoxelData {
+  color: Color;
   position: Vector3;
 }
 
