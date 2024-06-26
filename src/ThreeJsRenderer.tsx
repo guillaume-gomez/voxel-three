@@ -50,6 +50,7 @@ function ThreeJsRenderer() {
                         position={[0,0,0]}
                         rotation={[0,0,0]}
                         groupRef={modelRef}
+                        visible={false}
                         autoScale
                     />
                     <BoxHelperMesh>

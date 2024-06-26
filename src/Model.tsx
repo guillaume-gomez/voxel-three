@@ -8,15 +8,26 @@ interface ModelProps {
   scale?: Vector3;
   path?: string;
   autoScale?: boolean;
+  visible?: boolean;
   groupRef: RefObject<Group>;
 }
 
 const MAX_SIZE = 8;
 const SCALE = new Vector3(1,1,1);
 
-function Model({ position, rotation, scale = SCALE, path = '/Donut.glb', autoScale=false, groupRef }: ModelProps) {
+function Model({
+  position,
+  rotation,
+  scale = SCALE,
+  path = '/Donut.glb',
+  autoScale = false,
+  visible = true,
+  groupRef
+}: ModelProps) {
   const { scene } = useGLTF(path);
   const [computedScale, setComputedScale] = useState<Vector3>(scale);
+
+  console.log(scene.traverse(child => console.log(child)));
 
   useEffect(() => {
     if(autoScale && scene) {
@@ -38,6 +49,7 @@ function Model({ position, rotation, scale = SCALE, path = '/Donut.glb', autoSca
       position={position}
       rotation={rotation}
       object={scene}
+      visible={visible}
     />
   );
 }
