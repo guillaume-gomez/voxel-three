@@ -1,4 +1,4 @@
-import { Box3, Vector3, Color, Object3D, Raycaster } from "three";
+import { Box3, Vector3, Color, Object3D, Raycaster, Mesh, DoubleSide } from "three";
 import { useState, useEffect } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
 
@@ -13,34 +13,46 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
     
     useEffect(() => {
         if(object3D) {
-            voxelizeMesh(object3D);
+            let voxels: VoxelData[] = [];
+
+            object3D.traverse((child) => {
+                if (child instanceof Mesh) {
+                    child.material.side = DoubleSide;
+                    voxels = [...voxels, ...voxelizeMesh(child)];
+                }
+            });
+            setVoxelsData(voxels);
         }
+
     }, [object3D])
 
-    function voxelizeMesh(mesh: Object3D) {
-        const voxels = [];
+    function voxelizeMesh(mesh: Object3D) : VoxelData[] {
+        const voxels : VoxelData[] = [];
         const boundingBox = new Box3().setFromObject(mesh);
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
                     const centerPosition = new Vector3(i + gridSize/2, j + gridSize/2, k + gridSize/2);
                     if (isInsideMesh(centerPosition, mesh)) {
+                        const color = new Color();
+                        const {h, s, l} = mesh.material.color.getHSL(color);
+                        color.setHSL(h, s * .8, l * .8 + .2);
                         if(randomizePosition) {
                             voxels.push({
                                 position:randomize(centerPosition),
-                                color: new Color( 0x00F0F0 )
+                                color
                             });
                         } else {
                             voxels.push({
                                 position: centerPosition,
-                                color: new Color( 0xffff00 )
+                                color
                             });
                         }
                     }
                 }
             }
         }
-        setVoxelsData(voxels);
+        return voxels;
     }
 
     function isInsideMesh(position: Vector3 , mesh: Object3D) {
