@@ -9,7 +9,7 @@ import SkyBox from "./SkyBox";
 import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
 
 
-const modelPaths = ["Donut.glb", "Hamburger.glb", "Volleyball.glb"];
+const modelPaths = ["Commodore.glb", "Donut.glb", "Globe.glb", "Hamburger.glb", "Rainbow.glb", "Volleyball.glb"];
 
 
 function ThreeJsRenderer() {
@@ -19,7 +19,7 @@ function ThreeJsRenderer() {
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
-    const modelsRef = useRef<Group[]>([null, null, null]);
+    const modelsRef = useRef<Group[]>([null, null, null, null, null, null]);
 
     console.log(selectedObject3D);
 
