@@ -27,8 +27,6 @@ function Model({
   const { scene } = useGLTF(path);
   const [computedScale, setComputedScale] = useState<Vector3>(scale);
 
-  console.log(scene.traverse(child => console.log(child)));
-
   useEffect(() => {
     if(autoScale && scene) {
       const boundingBox = new Box3().setFromObject(scene);

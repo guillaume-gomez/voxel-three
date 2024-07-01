@@ -9,6 +9,9 @@ import SkyBox from "./SkyBox";
 import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
 
 
+const modelPaths = ["Donut.glb", "Hamburger.glb", "Volleyball.glb"];
+
+
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
     const [geometriesType] = useState<string>("torus knot");
@@ -16,12 +19,20 @@ function ThreeJsRenderer() {
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
-    const modelRef= useRef<Group>(null);
+    const modelsRef = useRef<Group[]>([null, null, null]);
+
+    console.log(selectedObject3D);
 
     return (
         <div style={{width:"100%", height: "75%"}}>
-            <button onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-            <button onClick={() => setSelectedObject3D(modelRef!.current)}>Select Donut</button>
+            <button onClick={() => setSelectedObject3D(modelsRef!.current[0])}>Generate</button>
+            <select onChange={(e) => {setSelectedObject3D(modelsRef!.current[e.target.value])}}>
+                {
+                    modelPaths.map((modelPath, index) => {
+                        return <option key={modelPath} value={index}>{modelPath}</option>
+                    })
+                }
+            </select>
             <Canvas
                 style={{background: "grey", width: 500, height: 500}}
                 //camera={{ position: [0,0, 1], fov: 75, far: 1000 }}
@@ -39,20 +50,17 @@ function ThreeJsRenderer() {
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                    {/*<Box
-                        args={[10, 10, 2]}
-                        rotation={[Math.PI/2,0,0]}
-                        position={[0,-5,0]}
-                    >
-                        <meshStandardMaterial color="hotpink" />
-                    </Box>*/}
-                    <Model
-                        position={[0,0,0]}
-                        rotation={[0,0,0]}
-                        groupRef={modelRef}
-                        visible={false}
-                        autoScale
-                    />
+                    {modelsRef.current.map((modelRef, index) => {
+                        return (<Model
+                            position={[0,0,0]}
+                            rotation={[0,0,0]}
+                            groupRef={el => modelsRef.current[index] = el}
+                            visible={false}
+                            path={modelPaths[index]}
+                            autoScale
+                        />)
+                        })
+                    }
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
                             <Torus
