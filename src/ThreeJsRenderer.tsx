@@ -18,7 +18,7 @@ function ThreeJsRenderer() {
 
     return (
         <div style={{width:"100%", height: "75%"}}>
-            <button onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
+            <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
             <Canvas
                 style={{background: "grey", width: 500, height: 500}}
                 //shadowMapSoft={true}
