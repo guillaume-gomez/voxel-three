@@ -1,4 +1,12 @@
-import { Box3, Vector3, Color, Object3D, Raycaster } from "three";
+import {
+    Box3,
+    Vector3,
+    Color,
+    Object3D,
+    Raycaster,
+    SphereGeometry,
+    BoxGeometry
+} from "three";
 import { useState, useEffect } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
 
@@ -7,6 +15,10 @@ interface VoxelizerProps {
     gridSize?: number;
     randomizePosition?: boolean
 }
+
+const SIZE = 0.2;
+const sphereGeometry = new SphereGeometry(SIZE, SIZE, SIZE);
+const boxGeometry = new BoxGeometry(SIZE, SIZE, SIZE);
 
 function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
@@ -60,7 +72,10 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
     }
 
     return (
-        <VoxelInstancedMesh voxelsData={voxelsData} />
+        <VoxelInstancedMesh
+            voxelsData={voxelsData}
+            geometryInstance={boxGeometry}
+        />
     );
 }
 

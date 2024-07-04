@@ -1,12 +1,21 @@
-import {  Object3D, DoubleSide } from "three";
+import {
+    Object3D,
+    DoubleSide
+} from "three";
 import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 import SkyBox from "./SkyBox";
-
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
-
+import {
+    OrbitControls,
+    Torus,
+    Sphere,
+    TorusKnot,
+    Stage,
+    Grid,
+    Stats
+} from '@react-three/drei';
 
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);

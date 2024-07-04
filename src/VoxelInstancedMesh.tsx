@@ -23,7 +23,7 @@ interface VoxelInstancedMeshProps {
 
 const SIZE = 0.2;
 const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
-const material =  new MeshLambertMaterial({ emissive: 0x000000 })
+const material =  new MeshLambertMaterial({ emissive: 0x000000 });
 
 function VoxelInstancedMesh ({voxelsData, geometryInstance = boxGeometry, materialInstance = material} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
