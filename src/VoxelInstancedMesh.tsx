@@ -1,6 +1,8 @@
 import { useRef , useEffect } from 'react';
 import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3, Color  } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { useSpring, useSpringRef } from '@react-spring/web';
+
 
 export interface VoxelData {
   color: Color;
@@ -15,11 +17,30 @@ const SIZE = 0.2;
 const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
 const material =  new MeshLambertMaterial({ emissive: 0x000000 })
 
+
+const TRANSITION_DURATION = 200; //ms
+const DELAY_DURATION = 500; //ms
+
+
 function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
 
+  //const api = useSpringRef();
+  const [props, api] = useSpring(
+    () => ({
+    from: { position: [0,0,0], toto: 0 },
+    to: { position: [1,2,3], toto: 1 },
+    delay: DELAY_DURATION,
+    reset: true,
+    onStart: () => console.log("he fjdkfjdkfj"),
+    onChange: ({value: {position, toto}}) => console.log(position)
+    })
+  )
+
+
   useEffect(() => {
     init();
+
   }, [voxelsData])
 
   function init() {
