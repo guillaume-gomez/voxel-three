@@ -1,8 +1,7 @@
 import { useRef , useEffect } from 'react';
 import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3, Color  } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
-import { useSpring, useSpringRef } from '@react-spring/web';
-
+import { useSpring, useSpringRef, easings} from '@react-spring/web';
 
 export interface VoxelData {
   color: Color;
@@ -18,35 +17,70 @@ const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
 const material =  new MeshLambertMaterial({ emissive: 0x000000 })
 
 
-const TRANSITION_DURATION = 200; //ms
+const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
 
 function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
 
-  //const api = useSpringRef();
-  const [props, api] = useSpring(
-    () => ({
-    from: { position: [0,0,0], toto: 0 },
-    to: { position: [1,2,3], toto: 1 },
-    delay: DELAY_DURATION,
-    reset: true,
-    onStart: () => console.log("he fjdkfjdkfj"),
-    onChange: ({value: {position, toto}}) => console.log(position)
-    })
-  )
-
+  const springApi = useSpringRef();
+  useSpring({
+      ref: springApi,
+      from: { ratio: 0 },
+      to: { ratio: 1 },
+      delay: DELAY_DURATION,
+      config: {
+        duration: TRANSITION_DURATION,
+        easing: easings.easeOutElastic
+      },
+      reset: true,
+      onStart: () => console.log("he fjdkfjdkfj"),
+      onChange: ({value: {ratio}}) => {
+        renderFramePosition(ratio)
+      }
+    },
+  );
 
   useEffect(() => {
     init();
+    springApi.start();
 
-  }, [voxelsData])
+  }, [voxelsData, springApi])
 
-  function init() {
+  //render once
+  function renderOnce() {
     voxelsData.map(({position, color}, index) => {
       const object = new Object3D();
-      object.position.set(...position);
+      object.position.set(position.x, position.y, position.z);
+      object.updateMatrix();
+      meshRef.current?.setColorAt(index, color);
+      meshRef.current?.setMatrixAt(index, object.matrix);
+    })
+
+    meshRef.current!.instanceMatrix.needsUpdate = true;
+  }
+
+  function init() {
+    voxelsData.map(({ color}, index) => {
+      const object = new Object3D();
+      object.position.set(0,0,0);
+      object.updateMatrix();
+      meshRef.current?.setColorAt(index, color);
+      meshRef.current?.setMatrixAt(index, object.matrix);
+    })
+
+    meshRef.current!.instanceMatrix.needsUpdate = true;
+  }
+
+  function renderFramePosition(ratio: number) {
+    voxelsData.map(({position, color}, index) => {
+      const object = new Object3D();
+      object.position.set(
+        position.x*ratio,
+        position.y*ratio,
+        position.z*ratio
+      );
       object.updateMatrix();
       meshRef.current?.setColorAt(index, color);
       meshRef.current?.setMatrixAt(index, object.matrix);
