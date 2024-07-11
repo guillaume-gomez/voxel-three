@@ -11,7 +11,7 @@ import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@rea
 
 function ThreeJsRenderer() {
     const [ gridSize ] = useState<number>(0.2);
-    const [geometriesType] = useState<string>("torus knot");
+    const [geometriesType] = useState<string>("torus");
     const [randomizePosition] = useState<boolean>(false);
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
@@ -24,7 +24,6 @@ function ThreeJsRenderer() {
             <button onClick={() => setSelectedObject3D(modelRef!.current)}>Select Donut</button>
             <Canvas
                 style={{background: "grey", width: 500, height: 500}}
-                //camera={{ position: [0,0, 1], fov: 75, far: 1000 }}
                 //shadowMapSoft={true}
                 dpr={window.devicePixelRatio}
 
@@ -60,7 +59,7 @@ function ThreeJsRenderer() {
                                 ref={objectRef}
                                 visible={showObject}
                             >
-                                <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
+                                <meshStandardMaterial color="blue" wireframe={false} side={DoubleSide} />
                             </Torus>
                         }
                         {geometriesType === "torus knot" &&
@@ -69,14 +68,14 @@ function ThreeJsRenderer() {
                                 ref={objectRef}
                                 visible={showObject}
                             >
-                                <meshStandardMaterial color="purple" wireframe={true} side={DoubleSide} />
+                                <meshStandardMaterial color="purple" wireframe={false} side={DoubleSide} />
                             </TorusKnot>
                         }
                         {geometriesType === "sphere" &&
                             <Sphere ref={objectRef}
                                     visible={showObject}
                             >
-                              <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
+                              <meshStandardMaterial color="blue" wireframe={false} side={DoubleSide} />
                             </Sphere>
                         }
                     </BoxHelperMesh>
