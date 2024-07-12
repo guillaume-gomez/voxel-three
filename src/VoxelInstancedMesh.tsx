@@ -25,7 +25,7 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
 
   const springApi = useSpringRef();
-  useSpring({
+  const springs = useSpring({
       ref: springApi,
       from: { ratio: 0 },
       to: { ratio: 1 },
@@ -35,8 +35,9 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
         easing: easings.easeOutElastic
       },
       reset: true,
-      onStart: () => console.log("he fjdkfjdkfj"),
+      //onStart: () => console.log("he fjdkfjdkfj"),
       onChange: ({value: {ratio}}) => {
+        console.log(ratio)
         renderFramePosition(ratio)
       }
     },
@@ -44,8 +45,8 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
 
   useEffect(() => {
     init();
+    springApi.stop();
     springApi.start();
-
   }, [voxelsData, springApi])
 
   //render once
