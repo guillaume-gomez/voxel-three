@@ -5,21 +5,12 @@ import ThreeJsRenderer  from "./ThreeJsRenderer";
 
 function App() {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <div className="flex flex-col items-center gap-5">
+        <h1 className="text-3xl font-bold underline">Voxel Three</h1>
+        <ThreeJsRenderer />
       </div>
-      <h1 className="text-3xl font-bold underline">Vite + React</h1>
-      <ThreeJsRenderer />
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 

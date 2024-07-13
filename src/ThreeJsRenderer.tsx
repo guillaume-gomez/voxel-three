@@ -19,12 +19,15 @@ function ThreeJsRenderer() {
     const modelRef= useRef<Group>(null);
 
     return (
-        <div style={{width:"100%", height: "75%"}}>
-            <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-            <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelRef!.current)}>Select Donut</button>
+        <>
+            <div className="flex flex-row gap-3">
+                <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
+                <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelRef!.current)}>Select Donut</button>
+            </div>
 
             <Canvas
-                style={{background: "grey", width: 500, height: 500}}
+                className="w-full"
+                style={{background: "grey", height: "80vh"}}
                 //shadowMapSoft={true}
                 dpr={window.devicePixelRatio}
 
@@ -95,7 +98,7 @@ function ThreeJsRenderer() {
 
                     <OrbitControls makeDefault />
             </Canvas>
-      </div>
+      </>
     );
 }
 
