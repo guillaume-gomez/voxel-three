@@ -1,8 +1,9 @@
-import {  Object3D, DoubleSide } from "three";
+import {  Object3D, DoubleSide, Group, Object3DEventMap } from "three";
 import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
+import Model from "./Model";
 import SkyBox from "./SkyBox";
 
 import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
@@ -14,11 +15,14 @@ function ThreeJsRenderer() {
     const [randomizePosition] = useState<boolean>(false);
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
-    const objectRef = useRef<Object3D>(null);
+    const objectRef = useRef<Object3D<Object3DEventMap>>(null);
+    const modelRef= useRef<Group>(null);
 
     return (
         <div style={{width:"100%", height: "75%"}}>
             <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
+            <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelRef!.current)}>Select Donut</button>
+
             <Canvas
                 style={{background: "grey", width: 500, height: 500}}
                 //shadowMapSoft={true}
@@ -42,7 +46,13 @@ function ThreeJsRenderer() {
                     >
                         <meshStandardMaterial color="hotpink" />
                     </Box>*/}
-
+                    <Model
+                        position={[0,0,0]}
+                        rotation={[0,0,0]}
+                        groupRef={modelRef}
+                        visible={false}
+                        autoScale
+                    />
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
                             <Torus
@@ -82,6 +92,7 @@ function ThreeJsRenderer() {
                             <Stats/>
                         </group>
                     }
+
                     <OrbitControls makeDefault />
             </Canvas>
       </div>
