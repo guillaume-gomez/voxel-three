@@ -1,5 +1,5 @@
 import { Object3D, DoubleSide, Group, Object3DEventMap } from "three";
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
@@ -19,7 +19,7 @@ import {
 } from '@react-three/drei';
 
 
-const modelPaths = [
+export const modelPaths = [
     "Buggy.glb",
     "Commodore.glb",
     "Donut.glb",
@@ -33,40 +33,40 @@ const modelPaths = [
 
 export type TypeOfGeometry = 'rounded' | 'box';
 
-export interface ThreeJsRendererProps {
+interface ThreeJsRendererProps {
   typeOfGeometry: TypeOfGeometry;
   randomizePosition: boolean;
-  //selectedObject3D: Object3D|null;
   gridSize: number;
+  selectedObject: string|null;
 }
 
 
-function ThreeJsRenderer({ gridSize, typeOfGeometry, randomizePosition, /*selectedObject3D*/ }: ThreeJsRendererProps) {
+function ThreeJsRenderer({
+    gridSize,
+    typeOfGeometry,
+    randomizePosition,
+    selectedObjectIndex,
+    onSelected
+}: ThreeJsRendererProps) {
     const [geometriesType] = useState<string>("torus");
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
 
-    console.log(selectedObject3D)
+    useEffect(() => {
+         setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
+    }, [selectedObjectIndex])
 
     return (
            <>
-            <div className="flex flex-row gap-3">
+            {/*<div className="flex flex-row gap-3">
                 <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-                <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelsRef!.current[0])}>Select Model</button>
-              <select onChange={(e) => {setSelectedObject3D(modelsRef!.current[e.target.value])}}>
-                {
-                    modelPaths.map((modelPath, index) => {
-                        return <option key={modelPath} value={index}>{modelPath}</option>
-                    })
-                }
-        </select>
-            </div>
+            </div>*/}
 
             <Canvas
                 className="w-full"
-                style={{background: "grey", height: "80vh"}}
+                style={{background: "grey"}}
                 //shadowMapSoft={true}
                 dpr={window.devicePixelRatio}
 
