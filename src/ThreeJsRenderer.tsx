@@ -1,4 +1,4 @@
-import {  Object3D, DoubleSide, Group, Object3DEventMap } from "three";
+import { Object3D, DoubleSide, Group, Object3DEventMap } from "three";
 import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
@@ -6,13 +6,31 @@ import BoxHelperMesh from "./BoxHelperMesh";
 import Model from "./Model";
 import SkyBox from "./SkyBox";
 
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Grid, Stats } from '@react-three/drei';
+import {
+    OrbitControls,
+    Torus,
+    Sphere,
+    TorusKnot,
+    Stage,
+    Grid,
+    Stats,
+    GizmoHelper,
+    GizmoViewport
+} from '@react-three/drei';
 
 
-function ThreeJsRenderer() {
-    const [ gridSize ] = useState<number>(0.2);
+export type TypeOfGeometry = 'rounded' | 'box';
+
+interface ThreeJsRendererProps {
+  typeOfGeometry: TypeOfGeometry;
+  randomizePosition: boolean;
+  //selectedObject3D: Object3D|null;
+  gridSize: number;
+}
+
+
+function ThreeJsRenderer({ gridSize, typeOfGeometry, randomizePosition, /*selectedObject3D*/ }: ThreeJsRendererProps) {
     const [geometriesType] = useState<string>("torus");
-    const [randomizePosition] = useState<boolean>(false);
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
@@ -33,7 +51,7 @@ function ThreeJsRenderer() {
 
                 shadows
             >
-            <SkyBox />
+            <SkyBox size={30} />
                     <Stage
                         environment={null}
                         adjustCamera
@@ -96,7 +114,10 @@ function ThreeJsRenderer() {
                         </group>
                     }
 
-                    <OrbitControls makeDefault />
+                    <OrbitControls makeDefault maxDistance={15} />
+                    <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
+                        <GizmoViewport labelColor="white" axisHeadScale={1} />
+                    </GizmoHelper>
             </Canvas>
       </>
     );
