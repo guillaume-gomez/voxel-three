@@ -19,6 +19,18 @@ import {
 } from '@react-three/drei';
 
 
+const modelPaths = [
+    "Buggy.glb",
+    "Commodore.glb",
+    "Donut.glb",
+    "Globe.glb",
+    "Go_Kart.glb",
+    "Hamburger.glb",
+    "Rainbow.glb",
+    "The Orange Racer.glb",
+    "Volleyball.glb"
+];
+
 export type TypeOfGeometry = 'rounded' | 'box';
 
 export interface ThreeJsRendererProps {
@@ -34,13 +46,20 @@ function ThreeJsRenderer({ gridSize, typeOfGeometry, randomizePosition, /*select
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
-    const modelRef= useRef<Group>(null);
+    const modelsRef = useRef<Group[]>([]);
 
     return (
-        <>
+           <>
             <div className="flex flex-row gap-3">
                 <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-                <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelRef!.current)}>Select Donut</button>
+                <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelsRef!.current[0])}>Select Donut</button>
+              <select onChange={(e) => {setSelectedObject3D(modelsRef!.current[e.target.value])}}>
+                {
+                    modelPaths.map((modelPath, index) => {
+                        return <option key={modelPath} value={index}>{modelPath}</option>
+                    })
+                }
+        </select>
             </div>
 
             <Canvas
@@ -60,20 +79,17 @@ function ThreeJsRenderer({ gridSize, typeOfGeometry, randomizePosition, /*select
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                    {/*<Box
-                        args={[10, 10, 2]}
-                        rotation={[Math.PI/2,0,0]}
-                        position={[0,-5,0]}
-                    >
-                        <meshStandardMaterial color="hotpink" />
-                    </Box>*/}
-                    <Model
-                        position={[0,0,0]}
-                        rotation={[0,0,0]}
-                        groupRef={modelRef}
-                        visible={false}
-                        autoScale
-                    />
+                    {modelsRef.current.map((modelRef, index) => {
+                        return (<Model
+                            position={[0,0,0]}
+                            rotation={[0,0,0]}
+                            groupRef={el => modelsRef.current[index] = el}
+                            visible={false}
+                            path={modelPaths[index]}
+                            autoScale
+                        />)
+                        })
+                    }
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
                             <Torus
