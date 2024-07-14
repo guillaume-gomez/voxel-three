@@ -21,7 +21,7 @@ import {
 
 export type TypeOfGeometry = 'rounded' | 'box';
 
-interface ThreeJsRendererProps {
+export interface ThreeJsRendererProps {
   typeOfGeometry: TypeOfGeometry;
   randomizePosition: boolean;
   //selectedObject3D: Object3D|null;
