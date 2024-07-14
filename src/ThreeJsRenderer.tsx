@@ -46,13 +46,15 @@ function ThreeJsRenderer({ gridSize, typeOfGeometry, randomizePosition, /*select
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
-    const modelsRef = useRef<Group[]>([]);
+    const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
+
+    console.log(selectedObject3D)
 
     return (
            <>
             <div className="flex flex-row gap-3">
                 <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-                <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelsRef!.current[0])}>Select Donut</button>
+                <button className="btn btn-primary" onClick={() => setSelectedObject3D(modelsRef!.current[0])}>Select Model</button>
               <select onChange={(e) => {setSelectedObject3D(modelsRef!.current[e.target.value])}}>
                 {
                     modelPaths.map((modelPath, index) => {

@@ -12,7 +12,6 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
     
     useEffect(() => {
-        console.log(object3D);
         if(object3D) {
             let voxels: VoxelData[] = [];
 

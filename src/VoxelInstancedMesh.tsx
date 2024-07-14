@@ -37,7 +37,6 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
       reset: true,
       //onStart: () => console.log("he fjdkfjdkfj"),
       onChange: ({value: {ratio}}) => {
-        console.log(ratio)
         renderFramePosition(ratio)
       }
     },
