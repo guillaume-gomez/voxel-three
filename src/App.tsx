@@ -35,6 +35,7 @@ function App() {
                 <label className="label cursor-pointer gap-2 px-0">
                   <span className="label-text font-semibold">Model to render</span>
                   <select className="select select-primary" onChange={(e) => {setSelectedObjectIndex(e.target.value)}}>
+                    <option key={-1} value={-1}>Select Model</option>
                     {
                         modelPaths.map((modelPath, index) => {
                             return <option key={modelPath} value={index}>{modelPath}</option>
