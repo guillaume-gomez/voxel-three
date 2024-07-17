@@ -1,7 +1,7 @@
 import { Box3, Vector3, Color, Object3D, Raycaster, Mesh, DoubleSide } from "three";
 import { useState, useEffect } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
-import { useSpring, easings } from '@react-spring/web';
+import { useSpring, easings, useSpringRef } from '@react-spring/web';
 import { animated } from '@react-spring/three';
 
 
@@ -12,21 +12,23 @@ interface VoxelizerProps {
 }
 
 const TRANSITION_DURATION = 2000; //ms
+const DELAY_DURATION = 500; //ms
 
 function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
-    const [animate, setAnimate] = useState<boolean>(false);
 
+    const api = useSpringRef();
     const springs = useSpring({
-      rotation: animate ? [0,0,0] : [0, Math.PI * 4, 0],
-      delay: 0,
+      ref: api,
+      from: { rotation: [0,0,0] },
+      to: { rotation: [0, Math.PI * 2, 0] },
+      delay: DELAY_DURATION,
       config: {
         duration: TRANSITION_DURATION,
-        easing: easings.easeOutElastic
+        //easing: easings.easeOutElastic
       },
       reset: true,
     });
-    console.log(springs.rotation)
 
     
     useEffect(() => {
@@ -40,6 +42,8 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
                 }
             });
             setVoxelsData(voxels);
+            console.log("dsds")
+            api.start();
         }
 
     }, [object3D])
@@ -90,7 +94,7 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
     }
 
     return (
-        <animated.group>
+        <animated.group rotation={springs.rotation}>
             <VoxelInstancedMesh voxelsData={voxelsData} />
         </animated.group>
     );
