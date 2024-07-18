@@ -21,11 +21,11 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
     const springs = useSpring({
       ref: api,
       from: { rotation: [0,0,0] },
-      to: { rotation: [0, Math.PI * 2, 0] },
+      to: { rotation: [0, Math.PI * 4, 0] },
       delay: DELAY_DURATION,
       config: {
         duration: TRANSITION_DURATION,
-        //easing: easings.easeOutElastic
+        easing: easings.easeOutQuart
       },
       reset: true,
     });
