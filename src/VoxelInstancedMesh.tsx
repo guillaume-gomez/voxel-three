@@ -35,7 +35,6 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
         easing: easings.easeOutElastic
       },
       reset: true,
-      //onStart: () => console.log("he fjdkfjdkfj"),
       onChange: ({value: {ratio}}) => {
         renderFramePosition(ratio)
       }
@@ -46,7 +45,7 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
     init();
     springApi.stop();
     springApi.start();
-  }, [voxelsData, springApi])
+  }, [voxelsData, springApi]);
 
   //render once
   function renderOnce() {
