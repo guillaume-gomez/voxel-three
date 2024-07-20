@@ -23,12 +23,9 @@ export const modelPaths = [
     "Buggy.glb",
     "Commodore.glb",
     "Donut.glb",
-    "Globe.glb",
     "Go_Kart.glb",
     "Hamburger.glb",
     "Rainbow.glb",
-    "The Orange Racer.glb",
-    "Volleyball.glb"
 ];
 
 export type TypeOfGeometry = 'rounded' | 'box';
