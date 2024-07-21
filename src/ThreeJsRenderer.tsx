@@ -1,6 +1,5 @@
 import { 
     Object3D,
-    DoubleSide,
     Group,
     Object3DEventMap,
     TorusGeometry,
@@ -59,7 +58,7 @@ function ThreeJsRenderer({
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
     
     useEffect(() => {
-        const material = new MeshBasicMaterial( { color: 0xff44AA, side: DoubleSide } ); 
+        const material = new MeshBasicMaterial( { color: 0xff44AA } ); 
 
         const torusGeometry = new TorusGeometry( 2, 1, 30, 30 ); 
         const torus = new Mesh( torusGeometry, material );
