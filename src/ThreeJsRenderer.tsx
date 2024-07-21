@@ -13,6 +13,7 @@ import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import Model from "./Model";
 import SkyBox from "./SkyBox";
+import ModelSelector from "./ModelSelector";
 
 import {
     OrbitControls,
@@ -50,29 +51,9 @@ function ThreeJsRenderer({
     selectedObjectIndex,
     onSelected
 }: ThreeJsRendererProps) {
-    const [geometriesType] = useState<string>("torus");
-    const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
-    const [listOfOjects, setListOfObjects] = useState<Object3D[]>([]);
-    const objectRef = useRef<Object3D<Object3DEventMap>>(null);
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
     
-    useEffect(() => {
-        const material = new MeshBasicMaterial( { color: 0xff44AA } ); 
-
-        const torusGeometry = new TorusGeometry( 2, 1, 30, 30 ); 
-        const torus = new Mesh( torusGeometry, material );
-
-        const torusKnotGeometry = new TorusKnotGeometry( 2, 0.6, 50, 10 );
-        const torusKnot = new Mesh(torusKnotGeometry, material);
-
-        const sphereGeometry = new SphereGeometry();
-        const sphere = new Mesh(sphereGeometry, material);
-
-        setListOfObjects([torus, torusKnot, sphere])
-        setSelectedObject3D(torusKnot);
-    }, [])
-
     useEffect(() => {
          //setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
          //setSelectedObject3D(objectRef!.current);
@@ -80,16 +61,7 @@ function ThreeJsRenderer({
 
     return (
            <>
-            {/*<div className="flex flex-row gap-3">
-                <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-            </div>*/}
-            <div>
-                <select onChange={(e) => setSelectedObject3D(listOfOjects[parseInt(e.target.value)]) }>
-                    <option value="0">torus</option>
-                    <option value="1">torus knot</option>
-                    <option value="2">sphere</option>
-                </select>
-            </div>
+           <ModelSelector onSelected={(newSelectObject3D: Object3D) => setSelectedObject3D(newSelectObject3D)}/>
 
             <Canvas
                 className="w-full"
