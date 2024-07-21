@@ -1,16 +1,22 @@
-import { Object3D, DoubleSide, Group, Object3DEventMap } from "three";
+import { 
+    Object3D,
+    DoubleSide,
+    Group,
+    Object3DEventMap,
+    TorusGeometry,
+    TorusKnotGeometry,
+    MeshBasicMaterial,
+    Mesh,
+    SphereGeometry
+} from "three";
 import { useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
-import BoxHelperMesh from "./BoxHelperMesh";
 import Model from "./Model";
 import SkyBox from "./SkyBox";
 
 import {
     OrbitControls,
-    Torus,
-    Sphere,
-    TorusKnot,
     Stage,
     Grid,
     Stats,
@@ -48,11 +54,29 @@ function ThreeJsRenderer({
     const [geometriesType] = useState<string>("torus");
     const [showObject, setShowObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
+    const [listOfOjects, setListOfObjects] = useState<Object3D[]>([]);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
+    
+    useEffect(() => {
+        const material = new MeshBasicMaterial( { color: 0xff44AA, side: DoubleSide } ); 
+
+        const torusGeometry = new TorusGeometry( 2, 1, 30, 30 ); 
+        const torus = new Mesh( torusGeometry, material );
+
+        const torusKnotGeometry = new TorusKnotGeometry( 2, 0.6, 50, 10 );
+        const torusKnot = new Mesh(torusKnotGeometry, material);
+
+        const sphereGeometry = new SphereGeometry();
+        const sphere = new Mesh(sphereGeometry, material);
+
+        setListOfObjects([torus, torusKnot, sphere])
+        setSelectedObject3D(torusKnot);
+    }, [])
 
     useEffect(() => {
-         setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
+         //setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
+         //setSelectedObject3D(objectRef!.current);
     }, [selectedObjectIndex])
 
     return (
@@ -60,6 +84,13 @@ function ThreeJsRenderer({
             {/*<div className="flex flex-row gap-3">
                 <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
             </div>*/}
+            <div>
+                <select onChange={(e) => setSelectedObject3D(listOfOjects[parseInt(e.target.value)]) }>
+                    <option value="0">torus</option>
+                    <option value="1">torus knot</option>
+                    <option value="2">sphere</option>
+                </select>
+            </div>
 
             <Canvas
                 className="w-full"
@@ -89,33 +120,6 @@ function ThreeJsRenderer({
                         />)
                         })
                     }
-                    <BoxHelperMesh>
-                        {geometriesType === "torus" &&
-                            <Torus
-                                args={[2, 1, 30, 30]}
-                                ref={objectRef}
-                                visible={showObject}
-                            >
-                                <meshStandardMaterial color="blue" wireframe={false} side={DoubleSide} />
-                            </Torus>
-                        }
-                        {geometriesType === "torus knot" &&
-                            <TorusKnot
-                                args={[2, 0.6, 50, 10]}
-                                ref={objectRef}
-                                visible={showObject}
-                            >
-                                <meshStandardMaterial color="purple" wireframe={false} side={DoubleSide} />
-                            </TorusKnot>
-                        }
-                        {geometriesType === "sphere" &&
-                            <Sphere ref={objectRef}
-                                    visible={showObject}
-                            >
-                              <meshStandardMaterial color="blue" wireframe={false} side={DoubleSide} />
-                            </Sphere>
-                        }
-                    </BoxHelperMesh>
                     <Voxelizer
                         object3D={selectedObject3D}
                         gridSize={gridSize}
