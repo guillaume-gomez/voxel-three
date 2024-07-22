@@ -6,8 +6,8 @@ import {
     Mesh,
     SphereGeometry
 } from "three";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 import { useState, useEffect } from 'react';
+import { modelLoader } from "./utils";
 
 
 export const modelPaths = [
@@ -40,20 +40,21 @@ function ModelSelector({ onSelected } : ModelSelectorProps) {
       const sphereGeometry = new SphereGeometry();
       const sphere = new Mesh(sphereGeometry, material);
 
+      async function loadModels() {
+        // then load 3d models
+        const models : Object3D[] = [];
+        for(const url in modelPaths) {
+            const truc = await modelLoader(url)
+            console.log("loaded mesh")
+            models.push(scene);
+        }
+        console.log("loaded")
+        return models;
+      }
 
-      // then load 3d models
-      const models : Object3D[] = [];
-      const loader = new GLTFLoader();
-      modelPaths.forEach(url => {
-        loader.load(url, ({scene}) => {
-          console.log("loaded mesh")
-          models.push(scene);
-        });
-      });
-      console.log("loaded")
-
-
-      setListOfObjects([torus, torusKnot, sphere, ...models]);
+      const models = loadModels();
+      console.log(models)
+      setListOfObjects([torus, torusKnot, sphere]);
       onSelected(torus);
   }, []);
   
