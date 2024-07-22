@@ -48,7 +48,7 @@ function ThreeJsRenderer({
     onSelected
 }: ThreeJsRendererProps) {
     const [geometriesType] = useState<string>("torus");
-    const [showObject, setShowObject] = useState<boolean>(false);
+    const [showObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const objectRef = useRef<Object3D<Object3DEventMap>>(null);
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
