@@ -95,7 +95,7 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
 
     return (
         <animated.group rotation={springs.rotation}>
-            <VoxelInstancedMesh voxelsData={voxelsData} />
+            <VoxelInstancedMesh voxelsData={voxelsData} gridSize={gridSize} />
         </animated.group>
     );
 }

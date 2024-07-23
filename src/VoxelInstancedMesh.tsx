@@ -10,10 +10,11 @@ export interface VoxelData {
 
 interface VoxelInstancedMeshProps {
   voxelsData: VoxelData[];
+  geometrySize: number;
 }
 
 const SIZE = 0.2;
-const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
+//const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
 const material =  new MeshLambertMaterial({ emissive: 0x000000 })
 
 
@@ -21,8 +22,9 @@ const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
 
-function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
+function VoxelInstancedMesh ({voxelsData, gridSize} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
+  const boxGeometry = new RoundedBoxGeometry(gridSize, gridSize, gridSize, 2, 0.03);
 
   const springApi = useSpringRef();
   const springs = useSpring({
@@ -45,7 +47,7 @@ function VoxelInstancedMesh ({voxelsData} : VoxelInstancedMeshProps) {
     init();
     springApi.stop();
     springApi.start();
-  }, [voxelsData, springApi]);
+  }, [voxelsData, springApi, gridSize]);
 
   //render once
   function renderOnce() {
