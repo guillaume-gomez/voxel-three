@@ -1,4 +1,6 @@
 import { 
+    Box3,
+    Vector3,
     Object3D,
     TorusGeometry,
     TorusKnotGeometry,
@@ -24,6 +26,8 @@ interface ModelSelectorProps {
   onSelected: (object3D: Object3D) => void;
 }
 
+const MAX_SIZE = 8;
+
 function ModelSelector({ onSelected } : ModelSelectorProps) {
   const [listOfOjects, setListOfObjects] = useState<Object3D[]>([]);
 
@@ -32,39 +36,57 @@ function ModelSelector({ onSelected } : ModelSelectorProps) {
       const material = new MeshBasicMaterial( { color: 0xff44AA } ); 
 
       const torusGeometry = new TorusGeometry( 2, 1, 30, 30 ); 
-      const torus = new Mesh( torusGeometry, material );
+      let torus = new Mesh( torusGeometry, material );
+      torus.name = "Torus";
 
       const torusKnotGeometry = new TorusKnotGeometry( 2, 0.6, 50, 10 );
-      const torusKnot = new Mesh(torusKnotGeometry, material);
+      let torusKnot = new Mesh(torusKnotGeometry, material);
+      torusKnot.name = "Torus Knot";
 
       const sphereGeometry = new SphereGeometry();
-      const sphere = new Mesh(sphereGeometry, material);
+      let sphere = new Mesh(sphereGeometry, material);
+      sphere.name = "Sphere";
 
-      async function loadModels() {
+      async function loadModels(existingModels : Object3D[]) {
         // then load 3d models
         const models : Object3D[] = [];
-        for(const url in modelPaths) {
-            const truc = await modelLoader(url)
-            console.log("loaded mesh")
-            models.push(scene);
+        for(const url of modelPaths) {
+            try {
+              let { scene } = await modelLoader(url)
+              const boundingBox = new Box3().setFromObject(scene);
+              const size = boundingBox.getSize(new Vector3());
+              const scaleFactor = MAX_SIZE / size.length();
+
+              scene.name = url;
+              scene.scale.multiplyScalar(scaleFactor);
+              scene.traverse((child) => {
+                if (child instanceof Mesh) {
+                    child.scale.multiplyScalar(scaleFactor);
+                }
+            });
+              scene.updateWorldMatrix(true); 
+
+              models.push(scene);
+            } catch(error) {
+              console.error(error);
+            }
         }
-        console.log("loaded")
+        setListOfObjects([...existingModels, ...models]);
         return models;
       }
 
-      const models = loadModels();
-      console.log(models)
-      setListOfObjects([torus, torusKnot, sphere]);
+      loadModels([torus, torusKnot, sphere]);
       onSelected(torus);
   }, []);
-  
+
   return (
      <div>
         <select onChange={(e) => onSelected(listOfOjects[e.target.value]) }>
-            <option value={0}>torus</option>
-            <option value={1}>torus knot</option>
-            <option value={2}>sphere</option>
-            <option value={3}>test</option>
+            {
+              listOfOjects.map((object, index) => {
+                return (<option key={index} value={index}>{object.name}</option>);
+              })
+            }
         </select>
     </div>
   );

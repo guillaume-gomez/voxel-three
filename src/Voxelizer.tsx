@@ -42,7 +42,7 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
                 }
             });
             setVoxelsData(voxels);
-            console.log("dsds")
+            console.log("change model")
             api.start();
         }
 
@@ -50,6 +50,8 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
 
     function voxelizeMesh(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
+        console.log("oto ", mesh.scale)
+//        mesh.scale.multiplyScalar(0.3);
         const boundingBox = new Box3().setFromObject(mesh);
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
