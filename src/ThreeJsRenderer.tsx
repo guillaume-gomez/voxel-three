@@ -1,4 +1,4 @@
-import { 
+import {
     Object3D,
     Group,
     Object3DEventMap,
@@ -32,6 +32,8 @@ export const modelPaths = [
     "Go_Kart.glb",
     "Hamburger.glb",
     "Rainbow.glb",
+    "Lost_Explorer.glb",
+    "Typewriter.glb"
 ];
 
 export type TypeOfGeometry = 'rounded' | 'box';
@@ -53,7 +55,7 @@ function ThreeJsRenderer({
 }: ThreeJsRendererProps) {
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
-    
+
     useEffect(() => {
          //setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
          //setSelectedObject3D(objectRef!.current);
