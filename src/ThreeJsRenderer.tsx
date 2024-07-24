@@ -42,7 +42,7 @@ interface ThreeJsRendererProps {
   typeOfGeometry: TypeOfGeometry;
   randomizePosition: boolean;
   gridSize: number;
-  selectedObject: string|null;
+  selectedObject: Object3D| null;
 }
 
 
@@ -50,21 +50,10 @@ function ThreeJsRenderer({
     gridSize,
     typeOfGeometry,
     randomizePosition,
-    selectedObjectIndex,
-    onSelected
+    selectedObject,
 }: ThreeJsRendererProps) {
-    const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
-    const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
-
-    useEffect(() => {
-         //setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
-         //setSelectedObject3D(objectRef!.current);
-    }, [selectedObjectIndex])
-
     return (
            <>
-           <ModelSelector onSelected={(newSelectObject3D: Object3D) => setSelectedObject3D(newSelectObject3D)}/>
-
             <Canvas
                 className="w-full"
                 style={{background: "grey"}}
@@ -82,19 +71,8 @@ function ThreeJsRenderer({
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                    {modelsRef.current.map((modelRef, index) => {
-                        return (<Model
-                            position={[0,0,0]}
-                            rotation={[0,0,0]}
-                            groupRef={el => modelsRef.current[index] = el}
-                            visible={false}
-                            path={modelPaths[index]}
-                            autoScale
-                        />)
-                        })
-                    }
                     <Voxelizer
-                        object3D={selectedObject3D}
+                        object3D={selectedObject}
                         gridSize={gridSize}
                         randomizePosition={randomizePosition}
                     />

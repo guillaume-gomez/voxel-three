@@ -41,17 +41,15 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
                     voxels = [...voxels, ...voxelizeMesh(child)];
                 }
             });
+            console.log(voxels.length)
             setVoxelsData(voxels);
-            console.log("change model")
             api.start();
         }
 
-    }, [object3D])
+    }, [object3D, gridSize])
 
     function voxelizeMesh(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
-        console.log("oto ", mesh.scale)
-//        mesh.scale.multiplyScalar(0.3);
         const boundingBox = new Box3().setFromObject(mesh);
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {

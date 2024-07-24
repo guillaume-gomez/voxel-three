@@ -80,14 +80,17 @@ function ModelSelector({ onSelected } : ModelSelectorProps) {
   }, []);
 
   return (
-     <div>
-        <select onChange={(e) => onSelected(listOfOjects[e.target.value]) }>
+     <div className="form-control">
+       <label className="label cursor-pointer gap-2 px-0">
+         <span className="label-text font-semibold">Model to render</span>
+         <select className="select select-primary" onChange={(e) => onSelected(listOfOjects[e.target.value]) }>
             {
               listOfOjects.map((object, index) => {
                 return (<option key={index} value={index}>{object.name}</option>);
               })
             }
         </select>
+      </label>
     </div>
   );
 }
