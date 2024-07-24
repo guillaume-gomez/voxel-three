@@ -8,6 +8,7 @@ import Toggle from "./Toggle";
 function App() {
   const [typeOfGeometry, setTypeOfGeometry] = useState<TypeOfGeometry>(isMobile ? 'box' : 'rounded');
   const [gridSize, setGridSize] = useState<number>(0.2);
+  const [blockSize, setBlockSize] = useState<number>(0.2);
   const [randomizePosition, setRandomizePosition] = useState<boolean>(false);
   const [selectedObjectIndex, setSelectedObjectIndex] = useState<string|null>(null);
 
@@ -25,6 +26,14 @@ function App() {
                 step={0.1}
                 value={gridSize}
                 onChange={(value) => setGridSize(value)}
+              />
+              <Range
+                label="Block Size"
+                min={0.2}
+                max={2}
+                step={0.1}
+                value={blockSize}
+                onChange={(value) => setBlockSize(value)}
               />
               <Toggle
                 label="random position"
@@ -50,6 +59,7 @@ function App() {
       </div>
       <ThreeJsRenderer
         gridSize={gridSize}
+        blockSize={blockSize}
         typeOfGeometry={typeOfGeometry}
         randomizePosition={randomizePosition}
         selectedObjectIndex={selectedObjectIndex}
