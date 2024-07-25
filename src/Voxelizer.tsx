@@ -8,13 +8,14 @@ import { animated } from '@react-spring/three';
 interface VoxelizerProps {
     object3D: Object3D | null;
     gridSize?: number;
+    blockSize: number;
     randomizePosition?: boolean
 }
 
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
-function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : VoxelizerProps) {
+function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
 
     const api = useSpringRef();
@@ -46,7 +47,7 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
             api.start();
         }
 
-    }, [object3D])
+    }, [object3D, gridSize])
 
     function voxelizeMesh(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
@@ -95,7 +96,7 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
 
     return (
         <animated.group rotation={springs.rotation}>
-            <VoxelInstancedMesh voxelsData={voxelsData} gridSize={gridSize} />
+            <VoxelInstancedMesh voxelsData={voxelsData} blockSize={blockSize} />
         </animated.group>
     );
 }

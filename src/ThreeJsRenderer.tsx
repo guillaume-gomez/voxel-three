@@ -36,12 +36,14 @@ interface ThreeJsRendererProps {
   typeOfGeometry: TypeOfGeometry;
   randomizePosition: boolean;
   gridSize: number;
+  blockSize: number;
   selectedObject: string|null;
 }
 
 
 function ThreeJsRenderer({
     gridSize,
+    blockSize,
     typeOfGeometry,
     randomizePosition,
     selectedObjectIndex,
@@ -121,6 +123,7 @@ function ThreeJsRenderer({
                     <Voxelizer
                         object3D={selectedObject3D}
                         gridSize={gridSize}
+                        blockSize={blockSize}
                         randomizePosition={randomizePosition}
                     />
                     </Stage>
