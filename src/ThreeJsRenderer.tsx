@@ -8,6 +8,7 @@ import SkyBox from "./SkyBox";
 
 import {
     OrbitControls,
+    CameraControls,
     Torus,
     Sphere,
     TorusKnot,
@@ -49,6 +50,7 @@ function ThreeJsRenderer({
     selectedObjectIndex,
     onSelected
 }: ThreeJsRendererProps) {
+    const cameraControlRef = useRef<CameraControls|null>(null);
     const [geometriesType] = useState<string>("torus");
     const [showObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
@@ -57,7 +59,21 @@ function ThreeJsRenderer({
 
     useEffect(() => {
          setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
-    }, [selectedObjectIndex])
+    }, [selectedObjectIndex]);
+
+    useEffect(() => {
+        if(selectedObject3D) {
+            onStart(selectedObject3D);
+        }
+    }, [selectedObject3D]);
+
+  async function onStart(mesh : InstancedMesh) {
+    if(cameraControlRef.current) {
+      cameraControlRef.current.fitToBox(mesh, true,
+        { paddingLeft: 1, paddingRight: 1, paddingBottom: 2, paddingTop: 2 }
+      );
+    }
+  }
 
     return (
            <>
@@ -74,11 +90,7 @@ function ThreeJsRenderer({
                 shadows
             >
             <SkyBox size={30} />
-                    <Stage
-                        environment={null}
-                        adjustCamera
-                        preset="rembrandt"
-                    >
+
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
@@ -126,7 +138,7 @@ function ThreeJsRenderer({
                         blockSize={blockSize}
                         randomizePosition={randomizePosition}
                     />
-                    </Stage>
+
                     {import.meta.env.MODE === "development" &&
                         <group>
                             <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
@@ -134,7 +146,7 @@ function ThreeJsRenderer({
                         </group>
                     }
 
-                    <OrbitControls makeDefault maxDistance={15} />
+                    <CameraControls makeDefault maxDistance={15}  ref={cameraControlRef} />
                     <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
                         <GizmoViewport labelColor="white" axisHeadScale={1} />
                     </GizmoHelper>
