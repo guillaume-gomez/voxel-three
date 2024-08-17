@@ -5,7 +5,6 @@ import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
 import Model from "./Model";
 import SkyBox from "./SkyBox";
-
 import {
     OrbitControls,
     CameraControls,
@@ -60,8 +59,8 @@ function ThreeJsRenderer({
     const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
 
     useEffect(() => {
-         setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
-    }, [selectedObjectIndex]);
+        setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
+    }, [selectedObjectIndex, modelsRef.current]);
 
     useEffect(() => {
         if(selectedObject3D) {
@@ -95,14 +94,16 @@ function ThreeJsRenderer({
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                     {modelsRef.current.map((modelRef, index) => {
-                        return (<Model
-                            position={modelPaths[index].position}
-                            rotation={modelPaths[index].rotation}
-                            groupRef={el => modelsRef.current[index] = el}
-                            visible={false}
-                            path={modelPaths[index].path}
-                            autoScale
-                        />)
+                        return (
+                            <Model
+                                position={modelPaths[index].position}
+                                rotation={modelPaths[index].rotation}
+                                groupRef={el => modelsRef.current[index] = el}
+                                visible={false}
+                                path={modelPaths[index].path}
+                                autoScale
+                            />
+                        )
                         })
                     }
                     <BoxHelperMesh>

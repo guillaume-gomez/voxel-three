@@ -10,7 +10,7 @@ function App() {
   const [gridSize, setGridSize] = useState<number>(0.2);
   const [blockSize, setBlockSize] = useState<number>(0.2);
   const [randomizePosition, setRandomizePosition] = useState<boolean>(false);
-  const [selectedObjectIndex, setSelectedObjectIndex] = useState<string|null>(null);
+  const [selectedObjectIndex, setSelectedObjectIndex] = useState<number|string>(1);
 
   return (
     <div className="w-100 h-screen">
@@ -43,7 +43,11 @@ function App() {
               <div className="form-control">
                 <label className="label cursor-pointer gap-2 px-0">
                   <span className="label-text font-semibold">Model to render</span>
-                  <select className="select select-primary" onChange={(e) => {setSelectedObjectIndex(e.target.value)}}>
+                  <select
+                    className="select select-primary"
+                    value={selectedObjectIndex}
+                    onChange={(e) => {setSelectedObjectIndex(e.target.value)}}
+                  >
                     <option key={-1} value={-1}>Select Model</option>
                     {
                         modelPaths.map((modelPath, index) => {
