@@ -1,4 +1,4 @@
-import { Object3D, BoxHelper } from "three";
+import { BoxHelper } from "three";
 import { useHelper } from '@react-three/drei';
 
 interface BoxHelperMeshProps {

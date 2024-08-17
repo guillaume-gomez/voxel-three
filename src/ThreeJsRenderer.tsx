@@ -1,49 +1,110 @@
-import {  Object3D, DoubleSide } from "three";
-import { useRef, useState } from 'react';
+import { Object3D, DoubleSide, Group, Object3DEventMap } from "three";
+import { useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import BoxHelperMesh from "./BoxHelperMesh";
+import Model from "./Model";
 import SkyBox from "./SkyBox";
 
-import { OrbitControls, Torus, Sphere,TorusKnot, Stage, Box, Grid, Stats, Plane } from '@react-three/drei';
+import {
+    OrbitControls,
+    CameraControls,
+    Torus,
+    Sphere,
+    TorusKnot,
+    Stage,
+    Grid,
+    Stats,
+    GizmoHelper,
+    GizmoViewport,
+    Plane
+} from '@react-three/drei';
 
 
-function ThreeJsRenderer() {
-    const [ gridSize ] = useState<number>(0.2);
+export const modelPaths = [
+    "Buggy.glb",
+    "Commodore.glb",
+    "Donut.glb",
+    "Go_Kart.glb",
+    "Hamburger.glb",
+    "Rainbow.glb",
+    "Lost_Explorer.glb",
+    "Typewriter.glb"
+];
+
+export type TypeOfGeometry = 'rounded' | 'box';
+
+interface ThreeJsRendererProps {
+  typeOfGeometry: TypeOfGeometry;
+  randomizePosition: boolean;
+  gridSize: number;
+  blockSize: number;
+  selectedObject: string|null;
+}
+
+
+function ThreeJsRenderer({
+    gridSize,
+    blockSize,
+    typeOfGeometry,
+    randomizePosition,
+    selectedObjectIndex,
+    onSelected
+}: ThreeJsRendererProps) {
+    const cameraControlRef = useRef<CameraControls|null>(null);
     const [geometriesType] = useState<string>("torus");
-    const [randomizePosition] = useState<boolean>(false);
-    const [showObject, setShowObject] = useState<boolean>(true);
+    const [showObject] = useState<boolean>(false);
     const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
-    const objectRef = useRef<Object3D>(null);
+    const objectRef = useRef<Object3D<Object3DEventMap>>(null);
+    const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
+
+    useEffect(() => {
+         setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
+    }, [selectedObjectIndex]);
+
+    useEffect(() => {
+        if(selectedObject3D) {
+            onStart(selectedObject3D);
+        }
+    }, [selectedObject3D]);
+
+    async function onStart(mesh : InstancedMesh) {
+        if(cameraControlRef.current) {
+          await cameraControlRef.current.fitToBox(mesh, true,
+            { paddingLeft: 2, paddingRight: 2, paddingBottom: 2, paddingTop: 2 }
+          );
+          const cameraPosition = cameraControlRef.current.getPosition();
+          const y = Math.min(30, cameraPosition.y + 3);
+          await cameraControlRef.current.moveTo(0, y, 0, true);
+        }
+    }
 
     return (
-        <div style={{width:"100%", height: "75%"}}>
-            <button onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
+           <>
             <Canvas
-                style={{background: "grey", width: 500, height: 500}}
-                //camera={{ position: [0,0, 1], fov: 75, far: 1000 }}
+                className="w-full"
+                style={{background: "grey"}}
                 //shadowMapSoft={true}
                 dpr={window.devicePixelRatio}
 
                 shadows
             >
-            <SkyBox />
-                    <Stage
-                        environment={null}
-                        adjustCamera
-                        preset="rembrandt"
-                    >
+            <SkyBox size={50} />
+
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                    {/*<Box
-                        args={[10, 10, 2]}
-                        rotation={[Math.PI/2,0,0]}
-                        position={[0,-5,0]}
-                    >
-                        <meshStandardMaterial color="hotpink" />
-                    </Box>*/}
-
+                    {modelsRef.current.map((modelRef, index) => {
+                        return (<Model
+                            position={[0,0,0]}
+                            rotation={[0,0,0]}
+                            groupRef={el => modelsRef.current[index] = el}
+                            visible={false}
+                            path={modelPaths[index]}
+                            autoScale
+                        />)
+                        })
+                    }
                     <BoxHelperMesh>
                         {geometriesType === "torus" &&
                             <Torus
@@ -51,7 +112,7 @@ function ThreeJsRenderer() {
                                 ref={objectRef}
                                 visible={showObject}
                             >
-                                <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
+                                <meshStandardMaterial color="blue" wireframe={false} side={DoubleSide} />
                             </Torus>
                         }
                         {geometriesType === "torus knot" &&
@@ -60,38 +121,44 @@ function ThreeJsRenderer() {
                                 ref={objectRef}
                                 visible={showObject}
                             >
-                                <meshStandardMaterial color="purple" wireframe={true} side={DoubleSide} />
+                                <meshStandardMaterial color="purple" wireframe={false} side={DoubleSide} />
                             </TorusKnot>
                         }
                         {geometriesType === "sphere" &&
                             <Sphere ref={objectRef}
                                     visible={showObject}
                             >
-                              <meshStandardMaterial color="blue" wireframe={true} side={DoubleSide} />
+                              <meshStandardMaterial color="blue" wireframe={false} side={DoubleSide} />
                             </Sphere>
                         }
                     </BoxHelperMesh>
                     <Voxelizer
                         object3D={selectedObject3D}
                         gridSize={gridSize}
+                        blockSize={blockSize}
                         randomizePosition={randomizePosition}
                     />
                     <Plane
-                        args={[30, 30]}
+                        args={[50, 50]}
                         rotation={[-Math.PI/2,0,0]}
-                        position={[0,-4,0]}
-                        material-color="grey"
-                    />
-                    </Stage>
+                        position={[0,0,0]}
+                        castShadow
+                    >
+                        <meshStandardMaterial color="#353540" envMapIntensity={0.1} />
+                    </Plane>
                     {import.meta.env.MODE === "development" &&
                         <group>
                             <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
                             <Stats/>
                         </group>
                     }
-                    <OrbitControls makeDefault />
+
+                    <CameraControls makeDefault maxDistance={15} ref={cameraControlRef} />
+                    <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
+                        <GizmoViewport labelColor="white" axisHeadScale={1} />
+                    </GizmoHelper>
             </Canvas>
-      </div>
+      </>
     );
 }
 
