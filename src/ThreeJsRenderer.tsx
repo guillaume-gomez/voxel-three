@@ -22,14 +22,14 @@ import {
 
 
 export const modelPaths = [
-    "Buggy.glb",
-    "Commodore.glb",
-    "Donut.glb",
-    "Go_Kart.glb",
-    "Hamburger.glb",
-    "Rainbow.glb",
-    "Lost_Explorer.glb",
-    "Typewriter.glb"
+    { path: "Buggy.glb", rotation: [0,0,0], position: [0,0,0] },
+    { path: "Commodore.glb", rotation: [0,Math.PI,0], position: [0,0,0] },
+    { path: "Donut.glb", rotation: [0,0,0], position: [0,0,0] },
+    { path: "Go_Kart.glb", rotation: [0,0,0], position: [0,1,0] },
+    { path: "Hamburger.glb", rotation: [0,0,0], position: [0,0,0] },
+    { path: "Rainbow.glb", rotation: [0,Math.PI/2,0], position: [0,0,0] },
+    { path: "Lost_Explorer.glb", rotation: [0,Math.PI/2,0], position: [0,2,0] },
+    { path: "Typewriter.glb", rotation: [0,Math.PI,0], position: [0,0,0] }
 ];
 
 export type TypeOfGeometry = 'rounded' | 'box';
@@ -71,7 +71,7 @@ function ThreeJsRenderer({
     async function onStart(mesh : InstancedMesh) {
         if(cameraControlRef.current) {
           await cameraControlRef.current.fitToBox(mesh, true,
-            { paddingLeft: 2, paddingRight: 2, paddingBottom: 2, paddingTop: 2 }
+            { paddingLeft: 3, paddingRight: 3, paddingBottom: 3, paddingTop: 3 }
           );
           const cameraPosition = cameraControlRef.current.getPosition();
           const y = Math.min(30, cameraPosition.y + 3);
@@ -96,11 +96,11 @@ function ThreeJsRenderer({
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                     {modelsRef.current.map((modelRef, index) => {
                         return (<Model
-                            position={[0,0,0]}
-                            rotation={[0,0,0]}
+                            position={modelPaths[index].position}
+                            rotation={modelPaths[index].rotation}
                             groupRef={el => modelsRef.current[index] = el}
                             visible={false}
-                            path={modelPaths[index]}
+                            path={modelPaths[index].path}
                             autoScale
                         />)
                         })

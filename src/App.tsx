@@ -47,7 +47,7 @@ function App() {
                     <option key={-1} value={-1}>Select Model</option>
                     {
                         modelPaths.map((modelPath, index) => {
-                            return <option key={modelPath} value={index}>{modelPath}</option>
+                            return <option key={modelPath.path} value={index}>{modelPath.path}</option>
                         })
                     }
                     </select>
