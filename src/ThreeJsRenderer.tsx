@@ -86,7 +86,7 @@ function ThreeJsRenderer({
                 className="w-full"
                 style={{background: "grey"}}
                 dpr={window.devicePixelRatio}
-                camera={{ pov: 75, position: [0, 0, 10] }}
+                camera={{ pov: 75, position: [0, 5, 10] }}
                 shadows
             >
             <SkyBox size={50} />
