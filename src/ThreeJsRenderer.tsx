@@ -77,10 +77,6 @@ function ThreeJsRenderer({
 
     return (
            <>
-            {/*<div className="flex flex-row gap-3">
-                <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-            </div>*/}
-
             <Canvas
                 className="w-full"
                 style={{background: "grey"}}
@@ -146,7 +142,7 @@ function ThreeJsRenderer({
                         </group>
                     }
 
-                    <CameraControls makeDefault maxDistance={15}  ref={cameraControlRef} />
+                    <CameraControls makeDefault maxDistance={15} ref={cameraControlRef} />
                     <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
                         <GizmoViewport labelColor="white" axisHeadScale={1} />
                     </GizmoHelper>
