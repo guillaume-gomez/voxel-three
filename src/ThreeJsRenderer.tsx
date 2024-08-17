@@ -16,7 +16,8 @@ import {
     Grid,
     Stats,
     GizmoHelper,
-    GizmoViewport
+    GizmoViewport,
+    Plane
 } from '@react-three/drei';
 
 
@@ -67,20 +68,19 @@ function ThreeJsRenderer({
         }
     }, [selectedObject3D]);
 
-  async function onStart(mesh : InstancedMesh) {
-    if(cameraControlRef.current) {
-      cameraControlRef.current.fitToBox(mesh, true,
-        { paddingLeft: 1, paddingRight: 1, paddingBottom: 2, paddingTop: 2 }
-      );
+    async function onStart(mesh : InstancedMesh) {
+        if(cameraControlRef.current) {
+          await cameraControlRef.current.fitToBox(mesh, true,
+            { paddingLeft: 2, paddingRight: 2, paddingBottom: 2, paddingTop: 2 }
+          );
+          const cameraPosition = cameraControlRef.current.getPosition();
+          const y = Math.min(30, cameraPosition.y + 3);
+          await cameraControlRef.current.moveTo(0, y, 0, true);
+        }
     }
-  }
 
     return (
            <>
-            {/*<div className="flex flex-row gap-3">
-                <button className="btn btn-primary" onClick={() => setSelectedObject3D(objectRef!.current)}>Generate</button>
-            </div>*/}
-
             <Canvas
                 className="w-full"
                 style={{background: "grey"}}
@@ -89,7 +89,7 @@ function ThreeJsRenderer({
 
                 shadows
             >
-            <SkyBox size={30} />
+            <SkyBox size={50} />
 
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
@@ -138,7 +138,14 @@ function ThreeJsRenderer({
                         blockSize={blockSize}
                         randomizePosition={randomizePosition}
                     />
-
+                    <Plane
+                        args={[50, 50]}
+                        rotation={[-Math.PI/2,0,0]}
+                        position={[0,0,0]}
+                        castShadow
+                    >
+                        <meshStandardMaterial color="#353540" envMapIntensity={0.1} />
+                    </Plane>
                     {import.meta.env.MODE === "development" &&
                         <group>
                             <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
@@ -146,7 +153,7 @@ function ThreeJsRenderer({
                         </group>
                     }
 
-                    <CameraControls makeDefault maxDistance={15}  ref={cameraControlRef} />
+                    <CameraControls makeDefault maxDistance={15} ref={cameraControlRef} />
                     <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
                         <GizmoViewport labelColor="white" axisHeadScale={1} />
                     </GizmoHelper>
