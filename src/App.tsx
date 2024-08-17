@@ -11,6 +11,7 @@ import ModelSelector from "./ModelSelector";
 function App() {
   const [typeOfGeometry, setTypeOfGeometry] = useState<TypeOfGeometry>(isMobile ? 'box' : 'rounded');
   const [gridSize, setGridSize] = useState<number>(0.2);
+  const [blockSize, setBlockSize] = useState<number>(0.2);
   const [randomizePosition, setRandomizePosition] = useState<boolean>(false);
   const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
 
@@ -29,6 +30,14 @@ function App() {
                 value={gridSize}
                 onChange={(value) => setGridSize(value)}
               />
+              <Range
+                label="Block Size"
+                min={0.2}
+                max={2}
+                step={0.1}
+                value={blockSize}
+                onChange={(value) => setBlockSize(value)}
+              />
               <Toggle
                 label="random position"
                 value={randomizePosition}
@@ -41,6 +50,7 @@ function App() {
       </div>
       <ThreeJsRenderer
         gridSize={gridSize}
+        blockSize={blockSize}
         typeOfGeometry={typeOfGeometry}
         randomizePosition={randomizePosition}
         selectedObject={selectedObject3D}
