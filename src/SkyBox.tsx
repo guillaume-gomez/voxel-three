@@ -11,8 +11,8 @@ function SkyBox({size}: SkyBoxProps) {
       <boxGeometry args={[size, size, size]} />
       <meshBasicMaterial side={BackSide}>
         <GradientTexture
-          stops={[0, 1]} // As many stops as you want
-          colors={['aquamarine', 'hotpink']} // Colors need to match the number of stops
+          stops={[0 ,0.25, 0.60, 1]} // As many stops as you want
+          colors={["#3b160c", "#d15a84", "#f1c276", "#f3dab0" ]} // Colors need to match the number of stops
           size={1024} // Size is optional, default = 1024
         />
       </meshBasicMaterial>

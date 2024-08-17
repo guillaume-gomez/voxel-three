@@ -17,7 +17,8 @@ import {
     Stats,
     GizmoHelper,
     GizmoViewport,
-    Plane
+    Plane,
+    Box
 } from '@react-three/drei';
 
 
@@ -84,9 +85,8 @@ function ThreeJsRenderer({
             <Canvas
                 className="w-full"
                 style={{background: "grey"}}
-                //shadowMapSoft={true}
                 dpr={window.devicePixelRatio}
-
+                camera={{ pov: 75, position: [0, 0, 10] }}
                 shadows
             >
             <SkyBox size={50} />
@@ -146,6 +146,14 @@ function ThreeJsRenderer({
                     >
                         <meshStandardMaterial color="#353540" envMapIntensity={0.1} />
                     </Plane>
+                    <Box
+                        args={[50, 50, 1]}
+                        rotation={[-Math.PI/2,0,0]}
+                        position={[0,25,0]}
+
+                    >
+                        <meshStandardMaterial color="#360907" />
+                    </Box>
                     {import.meta.env.MODE === "development" &&
                         <group>
                             <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
