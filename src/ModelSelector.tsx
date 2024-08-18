@@ -12,14 +12,18 @@ import { useState, useEffect } from 'react';
 import { modelLoader } from "./utils";
 
 
+
 export const modelPaths = [
-    "Buggy.glb",
-    "Commodore.glb",
-    "Donut.glb",
-    "Go_Kart.glb",
-    "Hamburger.glb",
-    "Rainbow.glb",
+    { path: "Buggy.glb", rotation: [0,0,0], position: [0,0,0] },
+    { path: "Commodore.glb", rotation: [0,Math.PI,0], position: [0,0,0] },
+    { path: "Donut.glb", rotation: [0,0,0], position: [0,0,0] },
+    { path: "Go_Kart.glb", rotation: [0,0,0], position: [0,1,0] },
+    { path: "Hamburger.glb", rotation: [0,0,0], position: [0,0,0] },
+    { path: "Rainbow.glb", rotation: [0,Math.PI/2,0], position: [0,0,0] },
+    { path: "Lost_Explorer.glb", rotation: [0,Math.PI/2,0], position: [0,2,0] },
+    { path: "Typewriter.glb", rotation: [0,Math.PI,0], position: [0,0,0] }
 ];
+
 
 
 interface ModelSelectorProps {
@@ -38,34 +42,43 @@ function ModelSelector({ onSelected } : ModelSelectorProps) {
       const torusGeometry = new TorusGeometry( 2, 1, 30, 30 ); 
       let torus = new Mesh( torusGeometry, material );
       torus.name = "Torus";
+      torus.position.set(0, 3, 0);
 
       const torusKnotGeometry = new TorusKnotGeometry( 2, 0.6, 50, 10 );
       let torusKnot = new Mesh(torusKnotGeometry, material);
       torusKnot.name = "Torus Knot";
+      torusKnot.position.set(0,3,0);
 
       const sphereGeometry = new SphereGeometry();
       let sphere = new Mesh(sphereGeometry, material);
       sphere.name = "Sphere";
+      sphere.position.set(0,2,0);
 
       async function loadModels(existingModels : Object3D[]) {
         // then load 3d models
         const models : Object3D[] = [];
-        for(const url of modelPaths) {
+        for(const model of modelPaths) {
             try {
+              const url = model.path
               let { scene } = await modelLoader(url)
               const boundingBox = new Box3().setFromObject(scene);
               const size = boundingBox.getSize(new Vector3());
               const scaleFactor = MAX_SIZE / size.length();
 
               scene.name = url;
+              scene.position.set(...model.position);
+              scene.rotation.set(...model.rotation);
               scene.scale.multiplyScalar(scaleFactor);
+
               scene.traverse((child) => {
                 if (child instanceof Mesh) {
+                    child.position.set(...model.position);
+                    child.rotation.set(...model.rotation);
                     child.scale.multiplyScalar(scaleFactor);
                 }
-            });
-              scene.updateWorldMatrix(true); 
+              });
 
+              scene.updateWorldMatrix(true);
               models.push(scene);
             } catch(error) {
               console.error(error);

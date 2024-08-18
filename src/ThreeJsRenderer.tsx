@@ -61,21 +61,6 @@ function ThreeJsRenderer({
     selectedObject,
 }: ThreeJsRendererProps) {
     const cameraControlRef = useRef<CameraControls|null>(null);
-    const [geometriesType] = useState<string>("torus");
-    const [showObject] = useState<boolean>(false);
-    const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
-    const objectRef = useRef<Object3D<Object3DEventMap>>(null);
-    const modelsRef = useRef<Group[]>(Array.from({ length: modelPaths.length }, () => null));
-
-    useEffect(() => {
-         setSelectedObject3D(modelsRef!.current[selectedObjectIndex]);
-    }, [selectedObjectIndex]);
-
-    useEffect(() => {
-        if(selectedObject3D) {
-            onStart(selectedObject3D);
-        }
-    }, [selectedObject3D]);
 
     async function onStart(mesh : InstancedMesh) {
         if(cameraControlRef.current) {
@@ -131,7 +116,7 @@ function ThreeJsRenderer({
                         </group>
                     }
 
-                    <CameraControls makeDefault maxDistance={15} ref={cameraControlRef} />
+                    <CameraControls makeDefault maxDistance={20} ref={cameraControlRef} />
                     <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
                         <GizmoViewport labelColor="white" axisHeadScale={1} />
                     </GizmoHelper>
