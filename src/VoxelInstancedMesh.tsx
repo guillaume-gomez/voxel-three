@@ -1,6 +1,5 @@
 import { useRef , useEffect } from 'react';
-import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3, Color  } from 'three';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3, Color, BufferGeometry } from 'three';
 import { useSpring, useSpringRef, easings} from '@react-spring/web';
 
 export interface VoxelData {
@@ -11,6 +10,7 @@ export interface VoxelData {
 interface VoxelInstancedMeshProps {
   voxelsData: VoxelData[];
   blockSize: number;
+  geometry: BufferGeometry;
 }
 
 const SIZE = 0.2;
@@ -22,9 +22,9 @@ const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
 
-function VoxelInstancedMesh ({voxelsData, blockSize} : VoxelInstancedMeshProps) {
+function VoxelInstancedMesh ({voxelsData, blockSize, geometry} : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
-  const boxGeometry = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
+
 
   const springApi = useSpringRef();
   const springs = useSpring({
@@ -95,7 +95,7 @@ function VoxelInstancedMesh ({voxelsData, blockSize} : VoxelInstancedMeshProps) 
       receiveShadow={true}
       castShadow={true}
       ref={meshRef}
-      args={[boxGeometry, material, voxelsData.length ]}
+      args={[geometry, material, voxelsData.length ]}
     />
   );
 }

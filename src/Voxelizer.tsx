@@ -1,8 +1,10 @@
-import { Box3, Vector3, Color, Object3D, Raycaster, Mesh, DoubleSide } from "three";
+import { Box3, Vector3, Color, Object3D, Raycaster, Mesh, DoubleSide, BufferGeometry } from "three";
 import { useState, useEffect } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
 import { useSpring, easings, useSpringRef } from '@react-spring/web';
 import { animated } from '@react-spring/three';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { usePerformanceMonitor } from '@react-three/fiber';
 
 
 interface VoxelizerProps {
@@ -17,6 +19,19 @@ const DELAY_DURATION = 500; //ms
 
 function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
+    const boxGeometry = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
+    const refGeometry = useRef<BufferGeometry>(boxGeometry);
+
+    usePerformanceMonitor({
+        onIncline: () => {
+            console.log("incline");
+            refGeometry.current = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
+        },
+        onDecline: () => {
+            console.log("decline");
+            refGeometry.current = new BoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
+        },
+    })
 
     const api = useSpringRef();
     const springs = useSpring({
@@ -42,8 +57,8 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
                     voxels = [...voxels, ...voxelizeMesh(child)];
                 }
             });
+            console.log(voxels.length)
             setVoxelsData(voxels);
-            console.log("dsds")
             api.start();
         }
 
@@ -96,7 +111,11 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
 
     return (
         <animated.group rotation={springs.rotation}>
-            <VoxelInstancedMesh voxelsData={voxelsData} blockSize={blockSize} />
+            <VoxelInstancedMesh
+                voxelsData={voxelsData}
+                blockSize={blockSize}
+                geometry={refGeometry.current}
+            />
         </animated.group>
     );
 }
