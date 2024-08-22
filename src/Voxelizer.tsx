@@ -42,8 +42,8 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
                     voxels = [...voxels, ...voxelizeMesh(child)];
                 }
             });
+            console.log(voxels.length)
             setVoxelsData(voxels);
-            console.log("dsds")
             api.start();
         }
 

@@ -1,8 +1,11 @@
+import { Object3D } from "three";
 import { useState } from "react";
 import { isMobile } from 'react-device-detect';
-import ThreeJsRenderer, { TypeOfGeometry, modelPaths }  from "./ThreeJsRenderer";
+import ThreeJsRenderer, { TypeOfGeometry }  from "./ThreeJsRenderer";
 import Range from './Range';
 import Toggle from "./Toggle";
+import ModelSelector from "./ModelSelector";
+
 
 
 function App() {
@@ -10,7 +13,7 @@ function App() {
   const [gridSize, setGridSize] = useState<number>(0.2);
   const [blockSize, setBlockSize] = useState<number>(0.2);
   const [randomizePosition, setRandomizePosition] = useState<boolean>(false);
-  const [selectedObjectIndex, setSelectedObjectIndex] = useState<string|null>(null);
+  const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
 
   return (
     <div className="w-100 h-screen">
@@ -40,19 +43,7 @@ function App() {
                 value={randomizePosition}
                 toggle={() => setRandomizePosition(!randomizePosition)}
               />
-              <div className="form-control">
-                <label className="label cursor-pointer gap-2 px-0">
-                  <span className="label-text font-semibold">Model to render</span>
-                  <select className="select select-primary" onChange={(e) => {setSelectedObjectIndex(e.target.value)}}>
-                    <option key={-1} value={-1}>Select Model</option>
-                    {
-                        modelPaths.map((modelPath, index) => {
-                            return <option key={modelPath.path} value={index}>{modelPath.path}</option>
-                        })
-                    }
-                    </select>
-                  </label>
-              </div>
+              <ModelSelector onSelected={(newSelectObject3D: Object3D) => setSelectedObject3D(newSelectObject3D)}/>
             </div>
           </div>
         </div>
@@ -62,7 +53,7 @@ function App() {
         blockSize={blockSize}
         typeOfGeometry={typeOfGeometry}
         randomizePosition={randomizePosition}
-        selectedObjectIndex={selectedObjectIndex}
+        selectedObject={selectedObject3D}
       />
     </div>
   )
