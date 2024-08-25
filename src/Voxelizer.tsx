@@ -83,7 +83,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
         rayCaster.set(position, new Vector3(0,-1,0));
         const rayCasterIntersects = rayCaster.intersectObject(mesh, true);
         // we need odd number of intersections
-        return rayCasterIntersects.length % 2 === 1;
+        return rayCasterIntersects.length % 2 === 1  && rayCasterIntersects[0].distance <= 1.5 * gridSize;
     }
 
     function randomize(position: Vector3) : Vector3 {
