@@ -1,7 +1,6 @@
 import { Object3D } from "three";
 import { useState } from "react";
-import { isMobile } from 'react-device-detect';
-import ThreeJsRenderer, { TypeOfGeometry }  from "./ThreeJsRenderer";
+import ThreeJsRenderer  from "./ThreeJsRenderer";
 import Range from './Range';
 import Toggle from "./Toggle";
 import ModelSelector from "./ModelSelector";
@@ -23,7 +22,7 @@ function App() {
             <div>
               <Range
                 label="Precision"
-                min={0.2}
+                min={0.1}
                 max={2}
                 step={0.1}
                 value={gridSize}
@@ -31,7 +30,7 @@ function App() {
               />
               <Range
                 label="Block Size"
-                min={0.2}
+                min={0.1}
                 max={2}
                 step={0.1}
                 value={blockSize}

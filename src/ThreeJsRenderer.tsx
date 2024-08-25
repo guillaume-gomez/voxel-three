@@ -9,7 +9,7 @@ import {
     SphereGeometry
 } from "three";
 import { useRef, useState, useEffect } from 'react';
-import { Canvas, PerformanceMonitor } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import Model from "./Model";
 import SkyBox from "./SkyBox";
@@ -43,7 +43,6 @@ export const modelPaths = [
 export type TypeOfGeometry = 'rounded' | 'box';
 
 interface ThreeJsRendererProps {
-  typeOfGeometry: TypeOfGeometry;
   randomizePosition: boolean;
   gridSize: number;
   selectedObject: Object3D| null;
@@ -54,7 +53,6 @@ interface ThreeJsRendererProps {
 function ThreeJsRenderer({
     gridSize,
     blockSize,
-    typeOfGeometry,
     randomizePosition,
     selectedObject,
 }: ThreeJsRendererProps) {
@@ -85,14 +83,12 @@ function ThreeJsRenderer({
                     <ambientLight intensity={Math.PI / 2} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                     <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                    <PerformanceMonitor>
-                        <Voxelizer
-                            object3D={selectedObject}
-                            gridSize={gridSize}
-                            blockSize={blockSize}
-                            randomizePosition={randomizePosition}
-                        />
-                    </PerformanceMonitor>
+                    <Voxelizer
+                        object3D={selectedObject}
+                        gridSize={gridSize}
+                        blockSize={blockSize}
+                        randomizePosition={randomizePosition}
+                    />
                     <Plane
                         args={[50, 50]}
                         rotation={[-Math.PI/2,0,0]}

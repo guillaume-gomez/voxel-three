@@ -1,10 +1,23 @@
-import { Box3, Vector3, Color, Object3D, Raycaster, Mesh, DoubleSide, BufferGeometry } from "three";
+import {
+    Box3,
+    Vector3,
+    Color,
+    Object3D,
+    Raycaster,
+    Mesh,
+    DoubleSide,
+    BufferGeometry,
+    MeshLambertMaterial,
+    MeshBasicMaterial,
+    BoxGeometry,
+    SphereGeometry
+} from "three";
 import { useState, useEffect } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
 import { useSpring, easings, useSpringRef } from '@react-spring/web';
 import { animated } from '@react-spring/three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
-import { usePerformanceMonitor } from '@react-three/fiber';
+import { PerformanceMonitor, usePerformanceMonitor } from '@react-three/drei';
 
 
 interface VoxelizerProps {
@@ -17,21 +30,33 @@ interface VoxelizerProps {
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
+const SIZE = 0.2;
+const ROUNDED_BOX_GEOMETRY = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
+const BOX_GEOMETRY = new BoxGeometry(SIZE, SIZE, SIZE);
+
+
+
 function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
-    const boxGeometry = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
-    const refGeometry = useRef<BufferGeometry>(boxGeometry);
-
+    const [geometry, setGeometry] = useState<BufferGeometry>(BOX_GEOMETRY);
     usePerformanceMonitor({
         onIncline: () => {
-            console.log("incline");
-            refGeometry.current = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
+            console.log("incline", geometry.type);
+            if(geometry !== 'SphereGeometry') {
+                console.log("znyi")
+                //setGeometry(new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03));
+                setGeometry(new SphereGeometry());
+            }
+            //setMaterial(lambertMaterial);
         },
         onDecline: () => {
-            console.log("decline");
-            refGeometry.current = new BoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
+            console.log("decline", geometry.type);
+            if(geometry.type !== 'BoxGeometry') {
+                console.log("fdjkjdkfjdjf")
+                setGeometry(new BoxGeometry(blockSize, blockSize, blockSize));
+            }
         },
-    })
+    });
 
     const api = useSpringRef();
     const springs = useSpring({
@@ -62,7 +87,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             api.start();
         }
 
-    }, [object3D, gridSize])
+    }, [object3D, gridSize, geometry.type])
 
     function voxelizeMesh(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
@@ -114,10 +139,27 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             <VoxelInstancedMesh
                 voxelsData={voxelsData}
                 blockSize={blockSize}
-                geometry={refGeometry.current}
+                geometry={geometry}
             />
         </animated.group>
     );
 }
 
-export default Voxelizer;
+
+function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
+    return (
+        <PerformanceMonitor>
+            <Voxelizer
+                object3D={object3D}
+                gridSize={gridSize}
+                blockSize={blockSize}
+                randomizePosition={randomizePosition}
+            />
+        </PerformanceMonitor>
+    );
+}
+
+
+export default VoxelizerWrapper;
+
+
