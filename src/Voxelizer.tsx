@@ -112,7 +112,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             object3D.traverse((child) => {
                 if (child instanceof Mesh) {
                     child.material.side = DoubleSide;
-                    voxels = [...voxels, ...voxelizeMesh(child)];
+                    voxels = [...voxels, ...voxelizeMesh2(child)];
                 }
             });
             console.log(voxels.length)
@@ -123,10 +123,12 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
     }, [object3D, gridSize]);
 
     function voxelizeMesh2(mesh: Object3D) {
+        const voxels : VoxelData[] = [];
         let voxelsPositionHash = {};
         let indexPosition = 0;
+
         const boundingBox = new Box3().setFromObject(mesh);
-        console.log(boundingBox);
+
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
             for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
                 for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
@@ -167,7 +169,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             }
         }
         console.log("numberOfInstancesDeleted : ", Object.keys(voxelsPositionHash).length - voxels.length)
-        setVoxelsData(voxels);
+        //setVoxelsData(voxels);
         return voxels;
     }
 
@@ -248,7 +250,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
         rayCaster.set(position, new Vector3(0,-1,0));
         const rayCasterIntersects = rayCaster.intersectObject(mesh, true);
         // we need odd number of intersections
-        return rayCasterIntersects.length % 2 === 1  && rayCasterIntersects[0].distance <= 1.5 * gridSize;
+        return rayCasterIntersects.length % 2 === 1; //  && rayCasterIntersects[0].distance <= 1.5 * gridSize;
     }
 
     function randomize(position: Vector3) : Vector3 {
