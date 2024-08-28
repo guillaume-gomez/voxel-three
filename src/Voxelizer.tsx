@@ -72,12 +72,10 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
         return `${xFixed}#${yFixed}#${zFixed}`;
     }
 
-    // has bug
     function hasUpSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
         return !!voxelsPositionHash[createKey(x,y-gridSize,z)];
     }
 
-    // has bug
     function hasDownSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
         return !!voxelsPositionHash[createKey(x,y +gridSize,z)];
     }
