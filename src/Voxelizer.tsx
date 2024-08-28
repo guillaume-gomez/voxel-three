@@ -12,7 +12,7 @@ import {
     BoxGeometry,
     SphereGeometry
 } from "three";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
 import { useSpring, easings, useSpringRef } from '@react-spring/web';
 import { animated } from '@react-spring/three';
@@ -30,32 +30,66 @@ interface VoxelizerProps {
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
+// default size
 const SIZE = 0.2;
-const ROUNDED_BOX_GEOMETRY = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
 const BOX_GEOMETRY = new BoxGeometry(SIZE, SIZE, SIZE);
 
+const lambertMaterial =  new MeshLambertMaterial({ emissive: 0x000000 })
+const basicMaterial =  new MeshBasicMaterial({ emissive: 0x000000 })
 
 
 function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
     const [geometry, setGeometry] = useState<BufferGeometry>(BOX_GEOMETRY);
+    const [material, setMaterial] = useState<Material>(lambertMaterial);
+    const geometries = useMemo(() => {
+        let boxGeometry = new BoxGeometry(blockSize, blockSize, blockSize);
+            boxGeometry.name = "low-perf";
+
+        let roundedBoxGeometry = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2 , 0.05);
+            roundedBoxGeometry.name = "high-perf";
+
+        return [
+            boxGeometry,
+            roundedBoxGeometry
+        ];
+    },
+    [blockSize]);
+
     usePerformanceMonitor({
         onIncline: () => {
-            console.log("incline", geometry.type);
-            if(geometry !== 'SphereGeometry') {
-                console.log("znyi")
-                //setGeometry(new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03));
-                setGeometry(new SphereGeometry());
-            }
-            //setMaterial(lambertMaterial);
+            if(geometry.name !== "high-perf") {
+                    setGeometry(geometries[1]);
+                }
+                setMaterial(lambertMaterial);
         },
-        onDecline: () => {
-            console.log("decline", geometry.type);
-            if(geometry.type !== 'BoxGeometry') {
-                console.log("fdjkjdkfjdjf")
-                setGeometry(new BoxGeometry(blockSize, blockSize, blockSize));
-            }
+        onDecline: ({fps}) => {
+            console.log("decline ", fps);
+            if(geometry.name !== "low-perf") {
+                    setGeometry(geometries[0]);
+                }
+                setMaterial(basicMaterial);
         },
+        onChange: ({fps}) => {
+            console.log("fps -> ",  fps)
+            // use faster or lower geometries based on the fps
+            if(fps >= 60) {
+                if(geometry.name !== "high-perf") {
+                    setGeometry(geometries[1]);
+                }
+                setMaterial(lambertMaterial);
+            }
+            if(fps > 30) {
+                if(geometry.name !== "low-perf") {
+                    setGeometry(geometries[0]);
+                }
+            } else {
+                if(geometry.name !== "low-perf") {
+                    setGeometry(geometries[0]);
+                }
+                setMaterial(basicMaterial);
+            }
+        }
     });
 
     const api = useSpringRef();
@@ -87,7 +121,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             api.start();
         }
 
-    }, [object3D, gridSize, geometry.type])
+    }, [object3D, gridSize])
 
     function voxelizeMesh(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
@@ -140,6 +174,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
                 voxelsData={voxelsData}
                 blockSize={blockSize}
                 geometry={geometry}
+                material={material}
             />
         </animated.group>
     );

@@ -22,7 +22,7 @@ function App() {
             <div>
               <Range
                 label="Precision"
-                min={0.1}
+                min={0.2}
                 max={2}
                 step={0.1}
                 value={gridSize}
@@ -30,7 +30,7 @@ function App() {
               />
               <Range
                 label="Block Size"
-                min={0.1}
+                min={0.2}
                 max={2}
                 step={0.1}
                 value={blockSize}

@@ -1,5 +1,5 @@
 import { useRef , useEffect, useState } from 'react';
-import { Object3D, InstancedMesh, MeshLambertMaterial, MeshBasicMaterial, Vector3, Color, BufferGeometry, Material } from 'three';
+import { Object3D, InstancedMesh, Vector3, Color, BufferGeometry, Material } from 'three';
 import { useSpring, useSpringRef, easings} from '@react-spring/web';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { usePerformanceMonitor } from '@react-three/drei';
@@ -14,19 +14,14 @@ interface VoxelInstancedMeshProps {
   voxelsData: VoxelData[];
   blockSize: number;
   geometry : BufferGeometry;
+  material: Material;
 }
-
-const SIZE = 0.2;
-const BOX_GEOMETRY = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
-const lambertMaterial =  new MeshLambertMaterial({ emissive: 0x000000 })
-const basicMaterial =  new MeshBasicMaterial({ emissive: 0x000000 })
-
 
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
 
-function VoxelInstancedMesh ({voxelsData, blockSize, geometry } : VoxelInstancedMeshProps) {
+function VoxelInstancedMesh ({voxelsData, blockSize, geometry, material } : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
   const springApi = useSpringRef();
   const springs = useSpring({
@@ -50,6 +45,10 @@ function VoxelInstancedMesh ({voxelsData, blockSize, geometry } : VoxelInstanced
     springApi.stop();
     springApi.start();
   }, [voxelsData, springApi, blockSize]);
+
+  useEffect(() => {
+    renderOnce();
+  }, [geometry, material])
 
   //render once
   function renderOnce() {
@@ -97,7 +96,7 @@ function VoxelInstancedMesh ({voxelsData, blockSize, geometry } : VoxelInstanced
       receiveShadow={true}
       castShadow={true}
       ref={meshRef}
-      args={[geometry, lambertMaterial, voxelsData.length ]}
+      args={[geometry, material, voxelsData.length ]}
     />
   );
 }
