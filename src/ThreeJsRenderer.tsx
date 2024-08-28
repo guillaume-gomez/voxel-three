@@ -13,8 +13,6 @@ import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
 import Model from "./Model";
 import SkyBox from "./SkyBox";
-import ModelSelector from "./ModelSelector";
-
 import {
     OrbitControls,
     CameraControls,
@@ -45,7 +43,6 @@ export const modelPaths = [
 export type TypeOfGeometry = 'rounded' | 'box';
 
 interface ThreeJsRendererProps {
-  typeOfGeometry: TypeOfGeometry;
   randomizePosition: boolean;
   gridSize: number;
   selectedObject: Object3D| null;
@@ -56,7 +53,6 @@ interface ThreeJsRendererProps {
 function ThreeJsRenderer({
     gridSize,
     blockSize,
-    typeOfGeometry,
     randomizePosition,
     selectedObject,
 }: ThreeJsRendererProps) {

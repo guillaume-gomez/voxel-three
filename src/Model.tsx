@@ -1,6 +1,6 @@
 import { useEffect, useState, RefObject } from "react";
 import { Vector3, Box3, Group } from "three";
-import { Sky, useGLTF } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 
 interface ModelProps {
   position: Vector3;

@@ -1,7 +1,9 @@
-import { useRef , useEffect } from 'react';
-import { Object3D, InstancedMesh, MeshLambertMaterial,Vector3, Color  } from 'three';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { useRef , useEffect, useState } from 'react';
+import { Object3D, InstancedMesh, Vector3, Color, BufferGeometry, Material } from 'three';
 import { useSpring, useSpringRef, easings} from '@react-spring/web';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { usePerformanceMonitor } from '@react-three/drei';
+
 
 export interface VoxelData {
   color: Color;
@@ -11,21 +13,16 @@ export interface VoxelData {
 interface VoxelInstancedMeshProps {
   voxelsData: VoxelData[];
   blockSize: number;
+  geometry : BufferGeometry;
+  material: Material;
 }
-
-const SIZE = 0.2;
-//const boxGeometry = new RoundedBoxGeometry(SIZE, SIZE, SIZE, 2, 0.03);
-const material =  new MeshLambertMaterial({ emissive: 0x000000 })
-
 
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
 
-function VoxelInstancedMesh ({voxelsData, blockSize} : VoxelInstancedMeshProps) {
+function VoxelInstancedMesh ({voxelsData, blockSize, geometry, material } : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
-  const boxGeometry = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2, 0.03);
-
   const springApi = useSpringRef();
   const springs = useSpring({
       ref: springApi,
@@ -48,6 +45,10 @@ function VoxelInstancedMesh ({voxelsData, blockSize} : VoxelInstancedMeshProps) 
     springApi.stop();
     springApi.start();
   }, [voxelsData, springApi, blockSize]);
+
+  useEffect(() => {
+    renderOnce();
+  }, [geometry, material])
 
   //render once
   function renderOnce() {
@@ -95,7 +96,7 @@ function VoxelInstancedMesh ({voxelsData, blockSize} : VoxelInstancedMeshProps) 
       receiveShadow={true}
       castShadow={true}
       ref={meshRef}
-      args={[boxGeometry, material, voxelsData.length ]}
+      args={[geometry, material, voxelsData.length ]}
     />
   );
 }

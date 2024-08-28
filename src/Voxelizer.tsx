@@ -1,8 +1,23 @@
-import { Box3, Vector3, Color, Object3D, Raycaster, Mesh, DoubleSide } from "three";
-import { useState, useEffect } from 'react';
+import {
+    Box3,
+    Vector3,
+    Color,
+    Object3D,
+    Raycaster,
+    Mesh,
+    DoubleSide,
+    BufferGeometry,
+    MeshLambertMaterial,
+    MeshBasicMaterial,
+    BoxGeometry,
+    SphereGeometry
+} from "three";
+import { useState, useEffect, useMemo } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
 import { useSpring, easings, useSpringRef } from '@react-spring/web';
 import { animated } from '@react-spring/three';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { PerformanceMonitor, usePerformanceMonitor } from '@react-three/drei';
 
 
 interface VoxelizerProps {
@@ -15,8 +30,67 @@ interface VoxelizerProps {
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
+// default size
+const SIZE = 0.2;
+const BOX_GEOMETRY = new BoxGeometry(SIZE, SIZE, SIZE);
+
+const lambertMaterial =  new MeshLambertMaterial({ emissive: 0x000000 })
+const basicMaterial =  new MeshBasicMaterial({ emissive: 0x000000 })
+
+
 function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
+    const [geometry, setGeometry] = useState<BufferGeometry>(BOX_GEOMETRY);
+    const [material, setMaterial] = useState<Material>(lambertMaterial);
+    const geometries = useMemo(() => {
+        let boxGeometry = new BoxGeometry(blockSize, blockSize, blockSize);
+            boxGeometry.name = "low-perf";
+
+        let roundedBoxGeometry = new RoundedBoxGeometry(blockSize, blockSize, blockSize, 2 , 0.05);
+            roundedBoxGeometry.name = "high-perf";
+
+        return [
+            boxGeometry,
+            roundedBoxGeometry
+        ];
+    },
+    [blockSize]);
+
+    usePerformanceMonitor({
+        onIncline: () => {
+            if(geometry.name !== "high-perf") {
+                    setGeometry(geometries[1]);
+                }
+                setMaterial(lambertMaterial);
+        },
+        onDecline: ({fps}) => {
+            console.log("decline ", fps);
+            if(geometry.name !== "low-perf") {
+                    setGeometry(geometries[0]);
+                }
+                setMaterial(basicMaterial);
+        },
+        onChange: ({fps}) => {
+            console.log("fps -> ",  fps)
+            // use faster or lower geometries based on the fps
+            if(fps >= 60) {
+                if(geometry.name !== "high-perf") {
+                    setGeometry(geometries[1]);
+                }
+                setMaterial(lambertMaterial);
+            }
+            if(fps > 30) {
+                if(geometry.name !== "low-perf") {
+                    setGeometry(geometries[0]);
+                }
+            } else {
+                if(geometry.name !== "low-perf") {
+                    setGeometry(geometries[0]);
+                }
+                setMaterial(basicMaterial);
+            }
+        }
+    });
 
     const api = useSpringRef();
     const springs = useSpring({
@@ -96,9 +170,31 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
 
     return (
         <animated.group rotation={springs.rotation}>
-            <VoxelInstancedMesh voxelsData={voxelsData} blockSize={blockSize} />
+            <VoxelInstancedMesh
+                voxelsData={voxelsData}
+                blockSize={blockSize}
+                geometry={geometry}
+                material={material}
+            />
         </animated.group>
     );
 }
 
-export default Voxelizer;
+
+function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
+    return (
+        <PerformanceMonitor>
+            <Voxelizer
+                object3D={object3D}
+                gridSize={gridSize}
+                blockSize={blockSize}
+                randomizePosition={randomizePosition}
+            />
+        </PerformanceMonitor>
+    );
+}
+
+
+export default VoxelizerWrapper;
+
+

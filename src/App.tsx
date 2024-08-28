@@ -1,7 +1,6 @@
 import { Object3D } from "three";
 import { useState } from "react";
-import { isMobile } from 'react-device-detect';
-import ThreeJsRenderer, { TypeOfGeometry }  from "./ThreeJsRenderer";
+import ThreeJsRenderer  from "./ThreeJsRenderer";
 import Range from './Range';
 import Toggle from "./Toggle";
 import ModelSelector from "./ModelSelector";
@@ -9,7 +8,6 @@ import ModelSelector from "./ModelSelector";
 
 
 function App() {
-  const [typeOfGeometry, setTypeOfGeometry] = useState<TypeOfGeometry>(isMobile ? 'box' : 'rounded');
   const [gridSize, setGridSize] = useState<number>(0.2);
   const [blockSize, setBlockSize] = useState<number>(0.2);
   const [randomizePosition, setRandomizePosition] = useState<boolean>(false);
@@ -44,6 +42,7 @@ function App() {
                 toggle={() => setRandomizePosition(!randomizePosition)}
               />
               <ModelSelector onSelected={(newSelectObject3D: Object3D) => setSelectedObject3D(newSelectObject3D)}/>
+
             </div>
           </div>
         </div>
@@ -51,7 +50,6 @@ function App() {
       <ThreeJsRenderer
         gridSize={gridSize}
         blockSize={blockSize}
-        typeOfGeometry={typeOfGeometry}
         randomizePosition={randomizePosition}
         selectedObject={selectedObject3D}
       />
