@@ -56,8 +56,8 @@ function Voxelizer({object3D, gridSize=0.2, randomizePosition=false} : Voxelizer
         for(let i=0; i < voxels.length; i++) {
             const {x, y, z} = voxels[i].position;
              if(isInner(voxelsPositionHash, x, y, z)) {
-                voxels.splice(i, 1);
-                //voxels[i] = { position: voxels[i].position, color: new Color(0xFF23DD)}
+                //voxels.splice(i, 1);
+                voxels[i] = { position: voxels[i].position, color: new Color(0xFF23DD)}
             }
         }
         console.log("numberOfInstancesDeleted : ", Object.keys(voxelsPositionHash).length - voxels.length)
