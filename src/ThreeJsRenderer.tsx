@@ -78,43 +78,44 @@ function ThreeJsRenderer({
                 camera={{ pov: 75, position: [0, 5, 10] }}
                 shadows
             >
-                <SkyBox size={50} />
-                <ambientLight intensity={Math.PI / 2} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-                <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                <Voxelizer
-                    object3D={selectedObject}
-                    gridSize={gridSize}
-                    blockSize={blockSize}
-                    randomizePosition={randomizePosition}
-                />
-                <Plane
-                    args={[50, 50]}
-                    rotation={[-Math.PI/2,0,0]}
-                    position={[0,0,0]}
-                    castShadow
-                >
-                    <meshStandardMaterial color="#353540" envMapIntensity={0.1} />
-                </Plane>
-                <Box
-                    args={[50, 50, 1]}
-                    rotation={[-Math.PI/2,0,0]}
-                    position={[0,25,0]}
+            <SkyBox size={50} />
 
-                >
-                    <meshStandardMaterial color="#360907" />
-                </Box>
-                {import.meta.env.MODE === "development" &&
-                    <group>
-                        <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
-                        <Stats/>
-                    </group>
-                }
+                    <ambientLight intensity={Math.PI / 2} />
+                    <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+                    <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+                    <Voxelizer
+                        object3D={selectedObject}
+                        gridSize={gridSize}
+                        blockSize={blockSize}
+                        randomizePosition={randomizePosition}
+                    />
+                    <Plane
+                        args={[50, 50]}
+                        rotation={[-Math.PI/2,0,0]}
+                        position={[0,0,0]}
+                        castShadow
+                    >
+                        <meshStandardMaterial color="#353540" envMapIntensity={0.1} />
+                    </Plane>
+                    <Box
+                        args={[50, 50, 1]}
+                        rotation={[-Math.PI/2,0,0]}
+                        position={[0,25,0]}
 
-                <CameraControls makeDefault maxDistance={20} ref={cameraControlRef} />
-                <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
-                    <GizmoViewport labelColor="white" axisHeadScale={1} />
-                </GizmoHelper>
+                    >
+                        <meshStandardMaterial color="#360907" />
+                    </Box>
+                    {import.meta.env.MODE === "development" &&
+                        <group>
+                            <Grid args={[50, 50]} position={[0, -3.5,0]} cellColor='white' />
+                            <Stats/>
+                        </group>
+                    }
+
+                    <CameraControls makeDefault maxDistance={20} ref={cameraControlRef} />
+                    <GizmoHelper alignment="bottom-right" margin={[50, 50]}>
+                        <GizmoViewport labelColor="white" axisHeadScale={1} />
+                    </GizmoHelper>
             </Canvas>
       </>
     );

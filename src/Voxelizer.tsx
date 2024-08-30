@@ -118,7 +118,6 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             setVoxelsData(voxels);
             api.start();
         }
-
     }, [object3D, gridSize]);
 
     function voxelizeMesh2(mesh: Object3D) {
@@ -274,6 +273,19 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
     );
 }
 
+
+function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
+    return (
+        <PerformanceMonitor>
+            <Voxelizer
+                object3D={object3D}
+                gridSize={gridSize}
+                blockSize={blockSize}
+                randomizePosition={randomizePosition}
+            />
+        </PerformanceMonitor>
+    );
+}
 
 function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
     return (
