@@ -105,7 +105,6 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
       reset: true,
     });
 
-    
     useEffect(() => {
         if(object3D) {
             let voxels: VoxelData[] = [];
@@ -113,15 +112,108 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             object3D.traverse((child) => {
                 if (child instanceof Mesh) {
                     child.material.side = DoubleSide;
-                    voxels = [...voxels, ...voxelizeMesh(child)];
+                    voxels = [...voxels, ...voxelizeMesh2(child)];
                 }
             });
-            console.log(voxels.length)
             setVoxelsData(voxels);
             api.start();
         }
+    }, [object3D, gridSize]);
 
-    }, [object3D, gridSize])
+    function voxelizeMesh2(mesh: Object3D) {
+        const voxels : VoxelData[] = [];
+        let voxelsPositionHash = {};
+        let indexPosition = 0;
+
+        const boundingBox = new Box3().setFromObject(mesh);
+
+        for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
+            for (let j = boundingBox.min.y; j < boundingBox.max.y; j += gridSize) {
+                for (let k = boundingBox.min.z; k < boundingBox.max.z; k += gridSize) {
+                    const x = i + gridSize/2;
+                    const y = j + gridSize/2;
+                    const z = k + gridSize/2;
+
+                    const centerPosition = new Vector3(x, y, z);
+                    if (isInsideMesh(centerPosition, mesh)) {
+                        const color = new Color();
+                        const {h, s, l} = mesh.material.color.getHSL(color);
+                        color.setHSL(h, s * .8, l * .8 + .2);
+                        if(randomizePosition) {
+                            voxels.push({
+                                position:randomize(centerPosition),
+                                color
+                            });
+                        } else {
+                            voxels.push({
+                                position: centerPosition,
+                                color
+                            });
+                        }
+
+                        voxelsPositionHash = { [createKey(x,y,z)]: indexPosition, ...voxelsPositionHash };
+                        indexPosition++;
+                    }
+                }
+            }
+        }
+
+        //remove inner voxels
+        for(let i = voxels.length-1; i >= 0; i--) {
+            const {x, y, z} = voxels[i].position;
+             if(isInner(voxelsPositionHash, x, y, z)) {
+                //voxels[i] = { position: voxels[i].position, color: new Color("red") }
+                voxels.splice(i, 1);
+            }
+        }
+        const maxVoxels = Object.keys(voxelsPositionHash).length;
+        console.log("numberOfInstancesDeleted : ", maxVoxels - voxels.length, "/ ", maxVoxels);
+        //setVoxelsData(voxels);
+        return voxels;
+    }
+
+    function createKey(x: number, y: number, z: number) : string {
+        const xFixed = x.toFixed(5);
+        const yFixed = y.toFixed(5);
+        const zFixed = z.toFixed(5);
+
+        return `${xFixed}#${yFixed}#${zFixed}`;
+    }
+
+    function hasUpSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y-gridSize,z)];
+    }
+
+    function hasDownSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y +gridSize,z)];
+    }
+
+    function hasLeftSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x - gridSize,y,z)];
+    }
+
+    function hasRightSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x + gridSize,y,z)];
+    }
+
+    function hasFrontSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y,z - gridSize)];
+    }
+
+    function hasBackSibling(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return !!voxelsPositionHash[createKey(x,y,z + gridSize)];
+    }
+
+    function isInner(voxelsPositionHash: any, x: number, y: number, z: number) : boolean {
+        return (
+            hasBackSibling(voxelsPositionHash,x,y,z) &&
+            hasFrontSibling(voxelsPositionHash,x,y,z) &&
+            hasLeftSibling(voxelsPositionHash,x,y,z) &&
+            hasRightSibling(voxelsPositionHash,x,y,z) &&
+            hasUpSibling(voxelsPositionHash,x,y,z) &&
+            hasDownSibling(voxelsPositionHash,x,y,z)
+        );
+    }
 
     function voxelizeMesh(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
@@ -157,7 +249,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
         rayCaster.set(position, new Vector3(0,-1,0));
         const rayCasterIntersects = rayCaster.intersectObject(mesh, true);
         // we need odd number of intersections
-        return rayCasterIntersects.length % 2 === 1  && rayCasterIntersects[0].distance <= 1.5 * gridSize;
+        return rayCasterIntersects.length % 2 === 1; //  && rayCasterIntersects[0].distance <= 1.5 * gridSize;
     }
 
     function randomize(position: Vector3) : Vector3 {
@@ -167,6 +259,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             position.z + (Math.random() - 0.5),
         );
     }
+
 
     return (
         <animated.group rotation={springs.rotation}>
@@ -193,7 +286,6 @@ function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=
         </PerformanceMonitor>
     );
 }
-
 
 export default VoxelizerWrapper;
 
