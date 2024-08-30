@@ -287,20 +287,6 @@ function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=
     );
 }
 
-function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
-    return (
-        <PerformanceMonitor>
-            <Voxelizer
-                object3D={object3D}
-                gridSize={gridSize}
-                blockSize={blockSize}
-                randomizePosition={randomizePosition}
-            />
-        </PerformanceMonitor>
-    );
-}
-
-
 export default VoxelizerWrapper;
 
 
