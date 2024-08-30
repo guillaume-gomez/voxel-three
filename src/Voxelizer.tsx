@@ -115,7 +115,6 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
                     voxels = [...voxels, ...voxelizeMesh2(child)];
                 }
             });
-            console.log(voxels.length)
             setVoxelsData(voxels);
             api.start();
         }
@@ -161,14 +160,15 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
         }
 
         //remove inner voxels
-        for(let i=0; i < voxels.length; i++) {
+        for(let i = voxels.length-1; i >= 0; i--) {
             const {x, y, z} = voxels[i].position;
              if(isInner(voxelsPositionHash, x, y, z)) {
-                //voxels.splice(i, 1);
-                voxels[i] = { position: voxels[i].position, color: new Color(0xFF23DD)}
+                //voxels[i] = { position: voxels[i].position, color: new Color("red") }
+                voxels.splice(i, 1);
             }
         }
-        console.log("numberOfInstancesDeleted : ", Object.keys(voxelsPositionHash).length - voxels.length)
+        const maxVoxels = Object.keys(voxelsPositionHash).length;
+        console.log("numberOfInstancesDeleted : ", maxVoxels - voxels.length, "/ ", maxVoxels);
         //setVoxelsData(voxels);
         return voxels;
     }
