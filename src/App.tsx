@@ -12,6 +12,7 @@ function App() {
   const [blockSize, setBlockSize] = useState<number>(0.2);
   const [randomizePosition, setRandomizePosition] = useState<boolean>(false);
   const [selectedObject3D, setSelectedObject3D] = useState<Object3D| null>(null);
+  const [displayModel, setDisplayModel] = useState<boolean>(false);
 
   return (
     <div className="w-100 h-screen">
@@ -41,6 +42,11 @@ function App() {
                 value={randomizePosition}
                 toggle={() => setRandomizePosition(!randomizePosition)}
               />
+              <Toggle
+                label="Display model"
+                value={displayModel}
+                toggle={() => setDisplayModel(!displayModel)}
+              />
               <ModelSelector onSelected={(newSelectObject3D: Object3D) => setSelectedObject3D(newSelectObject3D)}/>
 
             </div>
@@ -52,6 +58,7 @@ function App() {
         blockSize={blockSize}
         randomizePosition={randomizePosition}
         selectedObject={selectedObject3D}
+        displayModel={displayModel}
       />
     </div>
   )
