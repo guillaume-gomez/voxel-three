@@ -24,7 +24,8 @@ interface VoxelizerProps {
     object3D: Object3D | null;
     gridSize?: number;
     blockSize: number;
-    randomizePosition?: boolean
+    randomizePosition?: boolean;
+    visible?: boolean;
 }
 
 const TRANSITION_DURATION = 2000; //ms
@@ -38,7 +39,7 @@ const lambertMaterial =  new MeshLambertMaterial({ emissive: 0x000000 })
 const basicMaterial =  new MeshBasicMaterial({ emissive: 0x000000 })
 
 
-function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
+function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, visible=true} : VoxelizerProps) {
     const [voxelsData, setVoxelsData] = useState<VoxelData[]>([]);
     const [geometry, setGeometry] = useState<BufferGeometry>(BOX_GEOMETRY);
     const [material, setMaterial] = useState<Material>(lambertMaterial);
@@ -118,7 +119,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
             setVoxelsData(voxels);
             api.start();
         }
-    }, [object3D, gridSize]);
+    }, [object3D, gridSize , randomizePosition]);
 
     function voxelizeMesh2(mesh: Object3D) {
         const voxels : VoxelData[] = [];
@@ -268,13 +269,14 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false} 
                 blockSize={blockSize}
                 geometry={geometry}
                 material={material}
+                visible={visible}
             />
         </animated.group>
     );
 }
 
 
-function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false} : VoxelizerProps) {
+function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=false, visible=true} : VoxelizerProps) {
     return (
         <PerformanceMonitor>
             <Voxelizer
@@ -282,6 +284,7 @@ function VoxelizerWrapper({object3D, gridSize=0.2, blockSize, randomizePosition=
                 gridSize={gridSize}
                 blockSize={blockSize}
                 randomizePosition={randomizePosition}
+                visible={visible}
             />
         </PerformanceMonitor>
     );

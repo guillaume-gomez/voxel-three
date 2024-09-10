@@ -15,13 +15,14 @@ interface VoxelInstancedMeshProps {
   blockSize: number;
   geometry : BufferGeometry;
   material: Material;
+  visible?: boolean;
 }
 
 const TRANSITION_DURATION = 2000; //ms
 const DELAY_DURATION = 500; //ms
 
 
-function VoxelInstancedMesh ({voxelsData, blockSize, geometry, material } : VoxelInstancedMeshProps) {
+function VoxelInstancedMesh ({voxelsData, blockSize, geometry, material, visible = true } : VoxelInstancedMeshProps) {
   const meshRef = useRef<InstancedMesh>(null);
   const springApi = useSpringRef();
   const springs = useSpring({
@@ -95,6 +96,7 @@ function VoxelInstancedMesh ({voxelsData, blockSize, geometry, material } : Voxe
     <instancedMesh
       receiveShadow={true}
       castShadow={true}
+      visible={visible}
       ref={meshRef}
       args={[geometry, material, voxelsData.length ]}
     />
