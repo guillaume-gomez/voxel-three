@@ -113,7 +113,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
             object3D.traverse((child) => {
                 if (child instanceof Mesh) {
                     child.material.side = DoubleSide;
-                    voxels = [...voxels, ...voxelizeMesh2(child)];
+                    voxels = [...voxels, ...voxelizeMeshOptimized(child)];
                 }
             });
             setVoxelsData(voxels);
@@ -121,7 +121,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
         }
     }, [object3D, gridSize , randomizePosition]);
 
-    function voxelizeMesh2(mesh: Object3D) {
+    function voxelizeMeshOptimized(mesh: Object3D) {
         const voxels : VoxelData[] = [];
         let voxelsPositionHash = {};
         let indexPosition = 0;
@@ -216,7 +216,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
         );
     }
 
-    function voxelizeMesh(mesh: Object3D) : VoxelData[] {
+    function voxelizeMeshBasic(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
         const boundingBox = new Box3().setFromObject(mesh);
         for (let i = boundingBox.min.x; i < boundingBox.max.x; i += gridSize) {
