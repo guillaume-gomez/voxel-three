@@ -23,7 +23,7 @@ function Range({ label, value, onChange, min = 0, max = 100, step = 1 } : RangeP
             step={step}
             value={value}
             className={`range range-primary range-sm`}
-            onChange={(event) => onChange(parseFloat(event.target.value, 10))}
+            onChange={(event) => onChange(parseFloat(event.target.value))}
           />
 
           <div className="flex flex-row justify-between text-sm">

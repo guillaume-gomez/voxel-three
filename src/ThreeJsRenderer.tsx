@@ -1,25 +1,10 @@
-import {
-    Object3D,
-    Group,
-    Object3DEventMap,
-    TorusGeometry,
-    TorusKnotGeometry,
-    MeshBasicMaterial,
-    Mesh,
-    SphereGeometry
-} from "three";
-import { useRef, useState, useEffect } from 'react';
+import { Object3D } from "three";
+import { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Voxelizer from "./Voxelizer";
-import Model from "./Model";
 import SkyBox from "./SkyBox";
 import {
-    OrbitControls,
     CameraControls,
-    Torus,
-    Sphere,
-    TorusKnot,
-    Stage,
     Grid,
     Stats,
     GizmoHelper,
@@ -60,43 +45,36 @@ function ThreeJsRenderer({
 }: ThreeJsRendererProps) {
     const cameraControlRef = useRef<CameraControls|null>(null);
 
-    async function onStart(mesh : InstancedMesh) {
-        if(cameraControlRef.current) {
-          await cameraControlRef.current.fitToBox(mesh, true,
-            { paddingLeft: 3, paddingRight: 3, paddingBottom: 3, paddingTop: 3 }
-          );
-          const cameraPosition = cameraControlRef.current.getPosition();
-          const y = Math.min(30, cameraPosition.y + 3);
-          await cameraControlRef.current.moveTo(0, y, 0, true);
-        }
-    }
-
     return (
         <Canvas
             className="w-full"
             style={{background: "grey"}}
             dpr={window.devicePixelRatio}
-            camera={{ pov: 75, position: [0, 5, 10] }}
+            camera={{ fov: 75, position: [0, 5, 10] }}
             shadows
         >
             <SkyBox size={50} />
             <ambientLight intensity={Math.PI / 2} />
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
             <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-            <Voxelizer
-                object3D={selectedObject}
-                gridSize={gridSize}
-                blockSize={blockSize}
-                randomizePosition={randomizePosition}
-                visible={!displayModel}
-            />
-            <primitive
-              position={[0,3,0]}
-              rotation={[0,0,0]}
-              scale={1}
-              object={selectedObject}
-              visible={displayModel}
-            />
+            {
+                selectedObject && <>
+                    <Voxelizer
+                        object3D={selectedObject}
+                        gridSize={gridSize}
+                        blockSize={blockSize}
+                        randomizePosition={randomizePosition}
+                        visible={!displayModel}
+                    />
+                    <primitive
+                      position={[0,3,0]}
+                      rotation={[0,0,0]}
+                      scale={1}
+                      object={selectedObject}
+                      visible={displayModel}
+                    />
+                </>
+            }
             <Plane
                 args={[50, 50]}
                 rotation={[-Math.PI/2,0,0]}

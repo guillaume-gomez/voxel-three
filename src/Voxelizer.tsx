@@ -9,8 +9,8 @@ import {
     BufferGeometry,
     MeshLambertMaterial,
     MeshBasicMaterial,
+    Material,
     BoxGeometry,
-    SphereGeometry
 } from "three";
 import { useState, useEffect, useMemo } from 'react';
 import VoxelInstancedMesh, { VoxelData } from "./VoxelInstancedMesh";
@@ -36,7 +36,7 @@ const SIZE = 0.2;
 const BOX_GEOMETRY = new BoxGeometry(SIZE, SIZE, SIZE);
 
 const lambertMaterial =  new MeshLambertMaterial({ emissive: 0x000000 })
-const basicMaterial =  new MeshBasicMaterial({ emissive: 0x000000 })
+const basicMaterial =  new MeshBasicMaterial({ color: 0x000000 })
 
 
 function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, visible=true} : VoxelizerProps) {
@@ -121,7 +121,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
         }
     }, [object3D, gridSize , randomizePosition]);
 
-    function voxelizeMeshOptimized(mesh: Object3D) {
+    function voxelizeMeshOptimized(mesh: Mesh) {
         const voxels : VoxelData[] = [];
         let voxelsPositionHash = {};
         let indexPosition = 0;
@@ -138,6 +138,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
                     const centerPosition = new Vector3(x, y, z);
                     if (isInsideMesh(centerPosition, mesh)) {
                         const color = new Color();
+                        // @ts-expect-error: Let's ignore a compile error like this unreachable code
                         const {h, s, l} = mesh.material.color.getHSL(color);
                         color.setHSL(h, s * .8, l * .8 + .2);
                         if(randomizePosition) {
@@ -216,6 +217,8 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
         );
     }
 
+    /*
+    // useful to keep it there
     function voxelizeMeshBasic(mesh: Object3D) : VoxelData[] {
         const voxels : VoxelData[] = [];
         const boundingBox = new Box3().setFromObject(mesh);
@@ -243,7 +246,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
             }
         }
         return voxels;
-    }
+    }*/
 
     function isInsideMesh(position: Vector3 , mesh: Object3D) {
         const rayCaster = new Raycaster();
@@ -263,7 +266,7 @@ function Voxelizer({object3D, gridSize=0.2, blockSize, randomizePosition=false, 
 
 
     return (
-        <animated.group rotation={springs.rotation}>
+        <animated.group rotation={springs.rotation as any}>
             <VoxelInstancedMesh
                 voxelsData={voxelsData}
                 blockSize={blockSize}

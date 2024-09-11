@@ -66,19 +66,19 @@ function ModelSelector({ onSelected } : ModelSelectorProps) {
               const scaleFactor = MAX_SIZE / size.length();
 
               scene.name = url;
-              scene.position.set(...model.position);
-              scene.rotation.set(...model.rotation);
+              scene.position.set(...model.position as [number, number, number]);
+              scene.rotation.set(...model.rotation as [number, number, number]);
               scene.scale.multiplyScalar(scaleFactor);
 
-              scene.traverse((child) => {
+              scene.traverse((child : Object3D) => {
                 if (child instanceof Mesh) {
-                    child.position.set(...model.position);
-                    child.rotation.set(...model.rotation);
+                    child.position.set(...model.position as [number, number, number]);
+                    child.rotation.set(...model.rotation as [number, number, number]);
                     child.scale.multiplyScalar(scaleFactor);
                 }
               });
 
-              scene.updateWorldMatrix(true);
+              scene.updateWorldMatrix(true, true);
               models.push(scene);
             } catch(error) {
               console.error(error);
@@ -96,7 +96,7 @@ function ModelSelector({ onSelected } : ModelSelectorProps) {
      <div className="form-control">
        <label className="label cursor-pointer gap-2 px-0">
          <span className="label-text font-semibold">Model to render</span>
-         <select className="select select-primary" onChange={(e) => onSelected(listOfOjects[e.target.value]) }>
+         <select className="select select-primary" onChange={(e) => onSelected(listOfOjects[parseInt(e.target.value, 10)]) }>
             {
               listOfOjects.map((object, index) => {
                 return (<option key={index} value={index}>{object.name}</option>);
