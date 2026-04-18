@@ -4,6 +4,9 @@
 
 The goal here is to mix the manipulation of react-three-fiber and primitives from three js.
 
+<img width="332" height="512" alt="Capture d’écran 2026-04-18 à 15 32 20" src="https://github.com/user-attachments/assets/57083dfc-e9ce-4ea7-98cb-dd87ccc783c5" />
+
+
 ## References
 
 ### buggy
